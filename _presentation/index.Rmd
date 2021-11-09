@@ -598,7 +598,7 @@ template: sampling
 ---
 template: sampling 
 ### IS algorithm : graphical point of view 
-3. Step 3 : Resample to get unweighted sample ($N=100$)
+3. Step 3 : Resample to get unweighted sample ( $N=100$ )
 
   <img src="IS3.png" alt="IS3"  style="height:60%" class = "centerimg" />
 
@@ -622,7 +622,7 @@ template: sampling
 ---
 template: sampling 
 ### IS algorithm : graphical point of view  
-3. Step 3 : Resample to get unweighted sample ($N=1000$)
+3. Step 3 : Resample to get unweighted sample ( $N=1000$ )
 
   <img src="IS4_1000.png" alt="IS4_1000"  style="height:60%" class = "centerimg" />
 

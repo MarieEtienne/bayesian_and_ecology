@@ -372,7 +372,7 @@ template: sampling
 ### Quantities of interest 
 
 .center[
-$$E[\class{bleu}{p}\vert  \class{vert}{y}] =  ?,  \quad CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) =  ?$$
+$$E[\class{bleu}{p}\vert  \class{vert}{y}] =  ?,  \quad CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) =  ?, \quad E[\class{bleu}{h(p)}\vert  \class{vert}{y}] =  ?$$
 ]
 
 --
@@ -409,11 +409,12 @@ template: sampling
 ### Quantities of interest 
 
 .center[
-$$E[\class{bleu}{p}\vert  \class{vert}{y}] =  ?,  \quad CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) =  ?$$
+$$E[\class{bleu}{p}\vert  \class{vert}{y}] =  ?,  \quad CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) =  ?, \quad E[\class{bleu}{h(p)}\vert  \class{vert}{y}] =  ?$$
 ]
 
---
+.center[ .rouge[Monte Carlo methods]]
 
+--
 .pull-left[
 
 ```{r,  fig.show='hide'}
@@ -433,6 +434,7 @@ knitr::include_graphics('figMC2.png')
 
 * $E[\class{bleu}{p}\vert  \class{vert}{y}] \approx \frac{1}{n} \sum_{k=1}^n p_i$
 * $CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) \approx [p_{(n*0.025)}, p_{(n*0.975)} ] ?$
+* $E[\class{bleu}{h(p)}\vert  \class{vert}{y}] \approx \frac{1}{n} \sum_{k=1}^n h(p_i)$
 
 ]
 
@@ -459,12 +461,7 @@ print(df)
 ```
 
 
-.center[
-.rouge[
-Monte Carlo Approximation
-]
-]
-]
+
 
 
 
@@ -486,7 +483,7 @@ E_{d_X}(\class{bleu}{h(X)}) & = \int_u \class{bleu}{h(u)} \, d_{X}(u) du \cr
 \end{align*}
 
 
-```{r, fig.show='hide'}
+```{r, fig.show='hide', message=FALSE, warning=FALSE}
 xseq <- seq(0, 1, length.out=100)
 sh1  <- 10
 sh2  <- 18
@@ -638,6 +635,7 @@ template: sampling
 Which is not so straightforward
 
 ---
+template: sampling 
 
 ## Monte Carlo Markov Chain algorithm (MCMC)
 
@@ -651,12 +649,15 @@ $$[X_{i+1}\vert \class{rouge}{X_{1:i}}] = [X_{i+1}\vert \class{rouge}{X_i}].$$
 - Ex2: Movement on a grid: at time $n$, the player moves on one adjacent cell with equal probability. $X_n$ being the position at time $n$, $(X_n)$ is a Markov chain.
 
 
+---
+template: sampling 
 
+## Monte Carlo Markov Chain algorithm (MCMC)
 ### Markov chain example - Ex1
 
 Random walk 
 $$X_{n+1} = X_{n} + E_{n+1}, \quad E_{n+1}\overset{ind}{\sim}\mathcal{U}(\{-1,1\})$$
-$(X_n)$ is a Markov chain. \par
+$(X_n)$ is a Markov chain.  
 
 
 
@@ -666,165 +667,244 @@ E <- sample(c(-1,1), replace=TRUE, size= n)
 X <- cumsum(E)
 p1 <- ggplot(data=data.frame(time=seq(1,n), X=X)) + geom_line(aes(x=time, y=X))
 print(p1)
-suppressMessages(ggsave(filename = 'RW1.pdf', width = 5, height = 4))
+suppressMessages(ggsave(filename = 'RW1.png', width = 5, height = 4))
 
 
 Z <- sapply(1:n, function(i_){max(X[1:i_])})
 p2<-  p1 +geom_line(data = data.frame(time=seq(1,n), Z=Z), aes(x=time, y=Z), col='red')
 print(p2)
-suppressMessages(ggsave(filename = 'SuppRW1.pdf', width = 5, height = 4))
+suppressMessages(ggsave(filename = 'SuppRW1.png', width = 5, height = 4))
 ```
 
-\begin{figure}
-\includegraphics[width=0.65\textwidth]{RW1.pdf}
-\end{figure}
+
+<img src="RW1.png" alt="RW1"  style="width:40%" class = "centerimg" />
 
 
+---
+template: sampling 
 
+## Monte Carlo Markov Chain algorithm (MCMC)
 
-### Markov chain example - Ex1
+### Markov chain example - Counterexample
+
+Random walk 
+$$X_{n+1} = X_{n} + E_{n+1}, \quad E_{n+1}\overset{ind}{\sim}\mathcal{U}(\{-1,1\})$$
 
 Supremum of a random walk 
-$Z_n = max_{k=1}^n X_k,$ 
+$Z_n = max_{k=1}^n X_k,$ $(Z_n)$ is not a Markov chain.
 
-\begin{figure}
-\includegraphics[width=0.65\textwidth]{SuppRW1.pdf}
-\end{figure}
-
---
-$(Z_n)$ is not a Markov chain.
+<img src="SuppRW1.png" alt="SuppRW1"  style="width:40%" class = "centerimg" />
 
 
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 ### Markov chain vocabulary
 
-\alert{State space} $\mathcal{S}$: the set of possible values for $(X_n)$.
+.rouge[State space] $\mathcal{S}$: the set of possible values for $(X_n)$.
 
-\alert{Initial distribution} $\nu_0$: the distribution for $X_0.$
+.rouge[Initial distribution] $\nu_0$: the distribution for $X_0.$
 
-\alert{Transition distribution} $\pi^{(i)}$: the distribution for $X_{i+1} \vert X_{i}$
+.rouge[Transition distribution] $\pi^{(i)}$: the distribution for $X_{i+1} \vert X_{i}$
 
-\alert{Homogeneity} if $\pi^{(i)}$ does not depend on $i$ the MC is said homogeneous.
+.rouge[Homogeneity] if $\pi^{(i)}$ does not depend on $i$ the MC is said homogeneous.
 
 
+
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 
 ### Markov chain example - Ex1
 
 Random walk 
 $$X_0=0, \quad X_{n+1} = X_{n} + E_{n+1}, \quad E_{n+1}\overset{ind}{\sim}\mathcal{U}(\{-1,1\})$$
-$(X_n)$ is a Markov chain. \par
+$(X_n)$ is a Markov chain.  
 
 with 
-- State space $\mathcal{S}=\mathbb{Z},$\par
-- Initial distribution $\nu_0=1_{\left\lbrace x=0\right \rbrace},$\par
-- Transition distribution $\pi(x, x+1) = 1- \pi(x, x-1) = .5$
+- State space 
+--
+ $\mathcal{S}=\mathbb{Z},$ 
 
+- Initial distribution 
+--
+$\nu_0=1_{\left\lbrace x=0\right \rbrace},$
+
+- Transition distribution
+--
+ $\pi(x, x+1) = 1- \pi(x, x-1) = .5$
+
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 ### Markov chain properties
-\footnotesize
+
 Let $X_n$ be an homogeneous Markov chain on state space $\mathcal{S}$ with initial distribution $\nu_0$ and transition $\pi$. 
 
-\alert{ Distribution of $X_1$ ?}
+.rouge[ Distribution of $X_1$?]
+
 --
 
-\begin{align}
-\P(X_1 =x) & = \int_{x_0} \P(X_0=x_0, X_1 = x) d_{x_0}\\
+$$\begin{aligned}
+\mathbb{P}(X_1 =x) & = \int_{x_0}    \mathbb{P}(X_0=x_0, X_1 = x) d_{x_0}\\
 & = \int_{x_0} \pi(x_0, x) \nu_{0}(x_0) d_{x_0}\\
-\end{align}
+\end{aligned}$$
+
+--
 
 On note $\nu_0 \pi$ la loi de $X_1$.
 
 --
 
-\alert{ Distribution of $X_n$ ?}
-\begin{align*}
-\P(X_n =x) & = \int_{x_0} \int_{x_1}  \ldots \int_{x_{n-1}}\P(X_0=x_0, X_1 = x_1, \ldots, X_{n-1}=x_{n-1}, X_n = x) d_{x_0}d_{x_1} \ldots d_{x_{n-1}}\\
+.rouge[ Distribution of $X_n$?]
+
+
+$$\begin{aligned}
+\mathbb{P}(X_n =x) & = \int_{x_0} \int_{x_1}  \ldots \int_{x_{n-1}}\mathbb{P}(X_0=x_0, X_1 = x_1, \ldots, X_{n-1}=x_{n-1}, X_n = x) d_{x_0}d_{x_1} \ldots d_{x_{n-1}}\\
 & =\int_{x_0} \int_{x_1}  \ldots \int_{x_{n-1}} \nu_0(x_0) \pi(x_0, x_1)  \ldots \pi(x_{n-1}, x)  d_{x_0}d_{x_1} \ldots d_{x_{n-1}}\\
-\end{align*}
+\end{aligned}$$
 
-\normalsize
 
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 ### Markov chain properties
 
-\begin{block}{Definition}
-$\nu$ is a stationary distribution if and only if 
-$$ X_i \sim \nu \Longrightarrow X_{i+1} \sim \nu$$  
-\end{block}
+.bleu[Definition]: $\nu$ is a stationary distribution if and only if 
+$$X_i \sim \nu \Longrightarrow X_{i+1} \sim \nu$$  
 
-\footnotesize
-
-Example On/Off:
-Let $p = (p_0, p_1),$ and let $X_n$ be defined by 
-$$ X_0 \sim \mathcal{B}(p_{init}), \quad X_{n+1}\vert X_n \sim \mathcal{B}(p_{X_n})$$
-
-\begin{figure}
-\includegraphics[height=0.4\textheight]{OnOff.pdf}
-\end{figure}
 --
 
-\class{rouge}{Distribution of $X_1$, $X_2$, ... ?}
+```{r on_off, echo = FALSE, fig.show='hide', message=FALSE, warning=FALSE}
+r_onoff <- function(n){
+  X0 <- sample(c(0,1), size = 1, prob = c(1/3, 2/3))
+  X <- rep(NA, n)
+  X[1] <- X0
+  p <- c(0.4, 0.8)
+  for(i in 1:(n-1)){
+    X[i+1] <- sample( c(0,1) , size = 1, prob = c ( 1-p[X[i]+1], p[X[i]+1] ))
+  }
+  return(X)
+}
+G <- 100
+nsim <- 500
+res <- lapply(1:G, function(i){
+  r_onoff(nsim)
+})
+
+res <- do.call(rbind, res) %>% as.data.frame()
+colnames(res) <- paste0("pos", 1:nsim, collapse = NULL)
+
+sim_dta <- t(res) %>% as.data.frame()
+colnames(sim_dta) <- paste0("sim", 1:G, collapse = NULL)
+sim_dta$time <- 1:nsim
+
+sim_dta %>% filter(time<50)  %>% ggplot() + geom_point(aes(y=sim1, x=time, col=as.factor(sim1))) + ggtitle("One realisation") +
+  scale_color_manual(values =  c('#F1D763', '#C94326')) + xlab('index') + ylab('Process value') +
+  theme(legend.position = "none")
+ggsave(filename = "sim1.png")
+
+
+res %>% ggplot() + geom_bar(aes(x=pos90), fill = c('#F1D763', '#C94326')) + ggtitle("Repartition for n = 90")+
+  theme(legend.position = "none")
+ggsave(filename = "distrib_90.png")
+
+res %>% ggplot() + geom_bar(aes(x=pos100), fill = c('#F1D763', '#C94326')) + ggtitle("Repartition for n = 100")+
+  theme(legend.position = "none")
+ggsave(filename = "distrib_100.png")
+```
+.pull-left[
+Example On/Off:
+Let $p = (p_0, p_1),$ and let $X_n$ be defined by 
+$$X_0 \sim \mathcal{B}(p_{init}), \quad X_{n+1}\vert X_n \sim \mathcal{B}(p_{X_n})$$
+]
+
+.pull-right[
+
+  <img src="sim1.png" alt="Simulation"  style="width:90%" class = "centerimg" />
+
+]
+
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+.rouge[Distribution of $X_1$, $X_2$, ... ?]
 
 
 ###  Markov chain properties
 
-\begin{block}{Ergodic property}
-
+.rouge[Ergodic property]
 If a Markov chain $(X_i)$ is irreducible, aperiodic and recurrent then there is exists a unique stationnary distribution $\pi$ and
 $$[X_n] \underset{n\to \infty}{\longrightarrow } \pi . $$
 
-\end{block}
 
-If a Markov chain $(X_i)$ is reversible ($[X_i][X_{i+1}\vert X_i] = [X_{i+1}] [X_i\vert X_{i+1}]$) then this Markov chain admits a stationary distribution. 
+If a Markov chain $(X_i)$ is reversible ( $[X_i][X_{i+1}\vert X_i] = [X_{i+1}] [X_i\vert X_{i+1}]$ ) then this Markov chain admits a stationary distribution. 
 
 
 ### Consequences of the ergodic theorem
 
 If $(X_n)$ is a Markov chain with stationary distribution, for any initial $\nu_0$, $[X_n]$ is close to the stationary distribution.
---
+
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 
-\alert{Back to the example on/off:}       
 
-```{r on_off,  out.width='60%', warning=FALSE}
-n <- 1e4
-X <- rep(NA,n)
-p <- c(0.2, 0.6)
-X[1] <- 0
-for(i in 1:n){
-  X[i+1] <- sample( x = c(0,1), size = 1, p = c(1- p[X[i]+1], p[X[i]+1] ))
-}
-p1 <- ggplot(data=data.frame(time=seq(0,n), X=X)) + geom_line(aes(x=time, y=X)) + xlim(c(0,100))
-print(p1)
+.rouge[Back to the example on/off:]       
+
+```{r on_off_2,  out.width='60%', warning=FALSE, message = FALSE}
+p1 <- sim_dta %>% ggplot() + geom_point(aes(x=time, y=sim1, col=as.factor(sim1))) +
+  scale_color_manual(values =  c('#F1D763', '#C94326')) + xlab('index') + ylab('Process value') +
+  theme(legend.position = "none")
+ggsave(filename = "sim1_tot.png")
 ```
+
+  <img src="sim1_tot.png" alt="Simulation"  style="height:30%" class = "centerimg" />
+
+
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+.rouge[Back to the example on/off:]       
 
 ### Consequences of the ergodic theorem
 
-If $(X_n)$ is a Markov chain with stationary distribution, for any initial $\nu_0$, $[X_n]$ is close to the stationary distribution.
---
+.pull-left[
+  <img src="distrib_90.png" alt="Simulation"  style="width:90%" class = "centerimg" />
+]
 
+.pull-right[
+  <img src="distrib_100.png" alt="Simulation"  style="width:90%" class = "centerimg" />
 
-\alert{Back to the example on/off:}       
+]
 
+---
+template: sampling 
 
-
-```{r first100, echo=FALSE, out.width='60%'}
-set.seed(1)
-X %>% as_tibble() %>% mutate(n=1:n(), count=cumsum(X==1), freq=count/n) %>% 
-  ggplot() + geom_line(aes(x=n , y = freq)) + labs(x = 'time', y = "proportion of 1's" ) +
-  geom_hline(yintercept = 1/3, col = 2, linetype = 'dashed') +
-  ggtitle("Evolution of the proportion of 1's")
-```
-
-
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 ### Metropolis Hastings algorithm
 
-Key idea : building a reversible Markov chain with $[\theta\vert y]$ as stationnary distribution
+.rouge[Key idea:] building a reversible Markov chain with $[\theta\vert y]$ as stationnary distribution
+
 --
 
 1. Initialization   $\theta^{(0)}$ an admissible initial value
+--
 2. For i in 1:nIter
   + Propose a new candidate value $\theta_c^{(i)}$ sampled from a proposal distribution $g(. \vert \theta^{(i-1)})$
   + Compute Metropolis Hastings ratio
@@ -842,7 +922,13 @@ ggplot <- function(...) ggplot2::ggplot(...)
 ```
 
 
-### Capture efficiency estimation
+---
+name: fish
+# Finally an example
+<img class="logopos_right" src="fish_logo.png" style="width:4%">
+
+--
+## Capture efficiency estimation
 
 20 fishes have been released around a trap, and 5 of them are caught. 
 
@@ -852,14 +938,16 @@ ggplot <- function(...) ggplot2::ggplot(...)
   - analytically
   - by simulation
   
+--
 
+## Capture efficiency estimation using jags
 
-### Capture efficiency estimation using jags
+see [capture.R](capture.R)
 
-see capture.R
+---
+template: fish
 
-
-### Capture Recapture
+## Capture Recapture
 
 Experimental design:
 
@@ -872,6 +960,3 @@ Experimental design:
 How to estimate the total size of the population ?  
 
 
-
-
-### References

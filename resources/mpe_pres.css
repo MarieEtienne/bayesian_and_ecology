@@ -192,6 +192,12 @@ a, a > code {
 img, video, iframe {
   max-width: 100%;
 }
+
+img {
+  max-width: 80%;
+  object-fit: contain;
+}
+
 blockquote {
   border-left: solid 5px lightgray;
   padding-left: 1em;

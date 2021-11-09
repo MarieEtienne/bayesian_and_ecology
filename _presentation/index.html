@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Bayesian calculus</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Marie-Pierre Etienne, Etienne Rivot" />
+    <script src="libs/header-attrs-2.7/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra_fit-screen-0.2.6/fit-screen.js"></script>
+    <link rel="stylesheet" href="mpe_pres.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Bayesian calculus
+## Practical methods
+### Marie-Pierre Etienne, Etienne Rivot
+### <a href="https://marieetienne.github.io/bayesian_and_ecology" class="uri">https://marieetienne.github.io/bayesian_and_ecology</a>
+### M2 Mode - Data science
+
+---
+
+
+&lt;script type="text/x-mathjax-config"&gt;
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js", "HTML.js"] }});
+&lt;/script&gt;
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;!-- F1D763 --&gt;
+&lt;!-- F7A913 --&gt;
+&lt;!-- C94326 --&gt;
+&lt;!-- 1F908E --&gt;
+&lt;!-- 33658A --&gt;
+
+
+
+
+&lt;!-- # Why do I enjoy research in statistics  ? --&gt;
+&lt;!-- -- --&gt;
+
+
+
+---
+name: intro
+# Introduction
+
+---
+template: intro
+## Previously in Bayes course
+
+&lt;img src="img/bayes_prior_post.png" width="70%" /&gt;
+
+---
+
+template: intro
+## Lecture's goal 
+
+
+
+
+A posterior distribution is defined  by 
+
+$$ [\theta \vert y ] = \frac{[y \vert \theta ][\theta]}{[ y ]} \mbox{ with } [ y ] = \int_{\theta} [y \vert \theta ][\theta] d\theta.$$
+--
+
+.care[ [y]  is mostly unavailable.]
+
+`$$[\theta \vert y ] \varpropto [y \vert \theta ][\theta][ y ]$$`
+
+--
+
+### But nothing can stop us!!
+
+`$$[\theta \vert y ] = ?$$`
+---
+name: analytic
+# Analytical posterior: the magic
+&lt;img class="logopos_right" src="magic.png" style="width:4%"&gt;
+
+--
+
+## Binomial example
+
+### Model presentation
+
+
+.pull-left[
+* Data model: `$$\class{bleu}{Y} \sim \mathcal{B}(\class{orange}{n}, \class{bleu}{p}), \quad n \mbox{ known }$$`
+* Parameter: `\(\class{bleu}{p}\)`.
+* Specifying an uniform prior `$$\class{bleu}{p} \sim \mathcal{U}(0,1)$$`
+]
+
+--
+.pull-right[
+
+&lt;img src="img/DAG_binom_1.png" width="70%" /&gt;
+
+]
+
+--
+
+`$$[p\vert y ] =  ?$$`
+---
+template: analytic
+
+## Binomial example
+
+### Posterior determination
+
+.rouge[What we know]
+
+`$$[p\vert y ] =  \frac{[y\vert p] [p]}{[y]}$$`
+--
+
+- Likelihood: `\([y\vert p] = {n \choose y} p^y (1-p)^{n-y}\)`
+- prior: `\([p] = 1_{0\leq p \leq 1}\)`
+- .rouge[predictive]: `\([y] = \int_{0}^1 {n \choose y} p^y (1-p)^{n-y}\)`
+
+--
+
+`\([y]\)` is a constant but not necessarily easy to compute.
+
+---
+template: analytic
+
+## Binomial example
+
+### Posterior identification
+
+Posterior shape:
+
+$$ [p\vert y] \propto K p^y (1-p)^{n-y} 1_{0\leq p \leq 1},$$
+with `\(K\)` a constant (in terms of `\(p\)`) to be determined.
+
+--
+
+#### Beta distribution 
+`\(X\)` follows a Beta distribution with shape parameter `\(a\)` and shape 2 parameter `\(b\)`, if  `\(X\)` admits a density `\(d_X\)` given by 
+`$$d_X(t)=\left\lbrace
+\begin{array}{l}
+ \frac{\Gamma(a+b)  }{\Gamma(a)\Gamma(b)} t^{a-1} (1-t)^{b-1} \quad t\in [0,1] ,\cr
+0 \quad \mbox{otherwise}\cr
+\end{array}\right.$$`
+
+See [Cheatsheet distribution](LoiProbas.pdf)
+
+---
+template: analytic
+## Binomial example
+
+### Posterior identification
+
+.pull-left[
+* Data model: `$$\class{vert}{Y} \sim \mathcal{B}(\class{orange}{n}, \class{bleu}{p}), \quad n \mbox{ known }$$`
+* Parameter: `\(\class{bleu}{p}\)`.
+* Specifying an uniform prior `$$\class{bleu}{p} \sim \mathcal{B}eta(1,1)$$`
+]
+
+.pull-right[
+&lt;img src="img/DAG_binom_1.png" width="70%" /&gt;
+
+]
+
+--
+
+$$ p\vert y \sim \mathcal{B}eta(\class{vert}{y}+1, \class{orange}{n}-\class{vert}{y}+1)  $$
+---
+template: analytic
+
+## Binomial example
+
+### Information within the data
+
+`$$\class{vert}{Y} \sim \mathcal{B}(\class{orange}{n}, \class{bleu}{p}), \quad n \mbox{ known ;} \quad \class{bleu}{p} \sim \mathcal{B}eta(1,1)$$`
+
+--
+
+
+.pull-left[
+#### Example 1
+
+`\(n=10, y=4\)` 
+
+
+
+  &lt;img src="post_beta_10_4.png" alt="Posterior beta"  style="width:70%" class = "centerimg" /&gt;
+
+$$  p\vert y \sim \mathcal{B}eta(\class{vert}{4}+1, \class{orange}{10}-\class{vert}{4}+1) $$
+
+]
+
+
+--
+
+.pull-right[
+#### Example 2
+
+`\(n=100, y=40\)` 
+
+
+
+  &lt;img src="post_beta_100_40.png" alt="Posterior beta" style="width:70%" class = "centerimg" /&gt;
+  
+$$ p\vert y \sim \mathcal{B}eta(\class{vert}{40}+1, \class{orange}{100}-\class{vert}{40}+1)  $$
+
+]
+
+---
+template: analytic
+## Binomial example
+
+### Some aditional remarks
+
+- A uniform distribution is a `\(\mathcal{B}eta(1,1)\)` distribution.
+- Conjugacy:
+`$$p\sim \mathcal{B}eta(1,1),\quad Y\sim\mathcal{B}(n,p), \quad p\vert y \sim \mathcal{B}eta(y+1,n-y+1)$$`
+
+
+--
+* Interpretation of parameter `\(a\)` and `\(b\)` as a number of success and failures.
+* What is the value of `\([y]\)` in this case ?
+
+---
+template: analytic
+
+## Regression model 
+
+.pull-left[
+* Model : `\(\class{vert}{Y_k}=\class{bleu}{\beta_0} + \class{bleu}{\beta_1} \class{orange}{x_k} +E_k, \quad E_k\overset{ind}{\sim}\mathcal{N}(0,\class{orange}{\sigma^2})\)`
+* Parameter: `\(\class{bleu}{\beta_0}, \class{bleu}{\beta_1}\)`.
+* Parameter assumed to be known: `\(\class{orange}{\sigma^2}\)`
+* Priors on  `\(\class{bleu}{\theta}=(\class{bleu}{\beta_0},\class{bleu}{\beta_1})\)`
+`$$[\class{bleu}{\beta_0},\class{bleu}{\beta_1}] = \mathcal{N}( \class{orange}{\mu_{prior}},  \class{orange}{\Lambda_{prior}}),$$`
+with `\(\Lambda_{prior}\)` denoting the precision matrix, i.e `\(\Sigma_{prior}^{-1}\)`. 
+
+]
+
+.pull-right[
+&lt;img src="img/DAG_norm.png" width="70%" /&gt;
+]
+
+---
+template: analytic
+
+## Regression model 
+
+### Posterior distribution
+
+Prior:
+
+`$$[\class{bleu}{\theta}] \propto \exp\left\lbrace  -\frac{1}{2} (\class{bleu}{\theta}- \class{orange}{\mu_{prior}})^\intercal    \class{orange}{\Lambda_{prior}} (\class{bleu}{\theta}- \class{orange}{\mu_{prior}})\right\rbrace,$$`
+
+
+Likelihood:
+$$[\class{vert}{y}\vert \class{bleu}{\theta}] \propto \exp\left\lbrace  -\frac{1}{2  \class{orange}{\sigma^2}} ( \class{vert}{y}- \class{orange}{X}\class{bleu}{\theta})^\intercal ( \class{vert}{y}- \class{orange}{X}\class{bleu}{\theta}) \right\rbrace    $$
+
+--
+
+Posterior shape:
+
+`$$[\class{bleu}{\theta} \vert  \class{vert}{y}] \propto\exp\left\lbrace  -\frac{1}{2} (\class{bleu}{\theta}- \class{orange}{\mu_{prior}})^\intercal    \class{orange}{\Lambda_{prior}} (\class{bleu}{\theta}- \class{orange}{\mu_{prior}})-\frac{1}{2  \class{orange}{\sigma^2}} ( \class{vert}{y}- \class{orange}{X}\class{bleu}{\theta})^\intercal ( \class{vert}{y}- \class{orange}{X}\class{bleu}{\theta})\right\rbrace ,$$`
+
+---
+template: analytic
+
+## Regression model 
+
+### Posterior identification
+
+After some calculus
+
+`$$[\class{bleu}{\beta_0},\class{bleu}{\beta_1}\vert  \class{vert}{y}] \sim \mathcal{N}(\mu_{post}, \Lambda_{post})$$`
+with
+
+
+`$$\Lambda_{post} =  \left ( \frac{\class{orange}{X^{\intercal}}\class{orange}{X}}{\class{orange}{\sigma^2}}+\class{orange}{\Lambda_{prior}}\right )$$`
+
+`$$\mu_{post} =\left (  \frac{\class{orange}{X^{\intercal}}\class{orange}{X}}{\class{orange}{\sigma^2}}+\class{orange}{\Lambda_{prior}}\right )^{-1}\left(\frac{\class{orange}{X^{\intercal}}\class{bleu}{Y}}{\class{orange}{\sigma^2}} +\class{orange}{\Lambda_{prior}}\class{orange}{\mu_{prior}} \right)$$`
+
+--
+
+Again a conjugacy property. 
+
+With a normal prior, the posterior is also normal.
+
+---
+name: sampling 
+# Sampling from posterior distribution
+
+
+&lt;img class="logopos_right" src="compute.png" style="width:5%"&gt;
+
+
+--
+## Why was Bayesian approach so uncommon
+
+- Analytical posterior distributions are rarely accessible 
+
+--
+
+- Computing the normalizing constant in general
+
+  - Deterministic numerical integration  is possible but tends to behave poorly when the number of parameters increase
+  
+  - Stochastic integration methods : Monte Carlo methods
+
+--
+
+- Avoiding the need of the normalizing constant : sampling instead of integrating
+  - an old idea which became possible with increasing computing performance
+
+---
+template: sampling 
+
+## Why a sample is mostly enough ?
+
+### Quantities of interest 
+
+.center[
+`$$E[\class{bleu}{p}\vert  \class{vert}{y}] =  ?,  \quad CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) =  ?$$`
+]
+
+--
+
+.pull-left[
+
+
+
+&lt;img src="figMC1.png" width="60%" /&gt;
+]
+
+---
+template: sampling 
+
+## Why a sample is mostly enough ?
+
+### Quantities of interest 
+
+.center[
+`$$E[\class{bleu}{p}\vert  \class{vert}{y}] =  ?,  \quad CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) =  ?$$`
+]
+
+--
+
+.pull-left[
+
+
+
+
+### Assuming we got a sample
+
+&lt;img src="figMC2.png" width="60%" /&gt;
+
+* `\(E[\class{bleu}{p}\vert  \class{vert}{y}] \approx \frac{1}{n} \sum_{k=1}^n p_i\)`
+* `\(CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) \approx [p_{(n*0.025)}, p_{(n*0.975)} ] ?\)`
+
+]
+
+--
+.pull-reight[
+
+
+.center[
+.rouge[
+Monte Carlo Approximation
+]
+]
+]
+
+
+
+```
+##       Sum    Theory     MC100    MC1000
+##      Mean 0.3571429 0.3599335 0.3597940
+## 5%  CIInf 0.2166169 0.2360994 0.2209081
+## 95% CISup 0.5094782 0.4950088 0.5199203
+```
+
+
+.center[
+.rouge[
+Monte Carlo Approximation
+]
+]
+]
+
+
+
+---
+template: sampling 
+
+## Importance sampling 
+
+### Key idea : mathematical point of view
+
+`$$E_{d_X}(\class{bleu}{h(X)})  =\int_u \class{bleu}{h(u)} \, d_{X}(u) du$$`
+--
+
+`\begin{align*}
+E_{d_X}(\class{bleu}{h(X)}) &amp; = \int_u \class{bleu}{h(u)} \, d_{X}(u) du \cr
+                                &amp; = \int_u  h(u)\, \frac{d_{X}(u)}{\class{vert}{d_Z(u)}  } \class{vert}{d_Z(u)} du\cr 
+                                &amp; =\int_u \class{rouge}{ h(u)\, \frac{d_{X}(u)}{d_Z(u)}  } d_Z(u) du \cr 
+                                &amp; = E_{\class{orange}{d_Z}}\left(\class{rouge}{ h(Z) \frac{d_{X}(Z)}{d_Z(Z)}}\right)
+\end{align*}`
+
+
+
+```
+## Warning: Removed 2 rows containing missing values (geom_bar).
+```
+
+```
+## Warning: Removed 2 rows containing missing values (geom_bar).
+```
+
+```
+## Warning: Removed 1 rows containing missing values (geom_point).
+```
+
+```
+## Warning: Removed 1 rows containing missing values (geom_point).
+
+## Warning: Removed 1 rows containing missing values (geom_point).
+```
+
+```
+## Warning: Removed 1 rows containing missing values (geom_point).
+```
+
+```
+## Warning: Removed 2 rows containing missing values (geom_bar).
+```
+
+```
+## Warning: Removed 2 rows containing missing values (geom_bar).
+```
+---
+
+template: sampling 
+
+## Importance sampling algorithm
+
+1. Sample from proposal distribution : `\(\class{orange}{(z_i)_{i=1,\ldots N}}\)`. 
+
+--
+2. For every particle `\(i\)`, Compute weight 
+`$$\class{rouge}{w_i} = {d_X(z_i)/d_Z(z_i)}$$` 
+
+--
+3. Normalize weight
+`$$\class{rouge}{\tilde{w}_i} = \frac{w_i}{\sum_{i=1}^{N} w_i}$$` 
+
+--
+`\((\class{orange}{z_i},\class{rouge}{\tilde{w}_i})\)` is a weighted sample from `\(d_X\)`. 
+
+--
+4. Resample to get unweighted sample `\(\class{bleu}{(x_i)_{1\leq i \leq n}}\)`. 
+
+Sample in `\(\class{oange}{(z_i)}\)` with replacement with a probability `\(\class{rouge}{\tilde{w}_i}\)` to get  `\(\class{bleu}{(x_i)_{1\leq i \leq n}}\)`.
+
+---
+
+template: sampling 
+
+## Importance sampling algorithm remarks
+
+* If `\(d_X\)` is known up to constant, (for instance . `\([p\vert y ]\propto [y\vert p] [p]\)`)
+
+`\(d_X = K \tilde{d}_X,\)`
+
+Weights are defined as `\(\omega_i = \tilde{d}_X(z_i) / d_Z(z_i)\)`
+
+Normalized weights are 
+`$$\tilde{\omega}_i =\frac{\omega_i}{\sum_i\omega_i} = \frac{w_i}{\sum_{i=1}^{N} w_i}$$`
+
+
+---
+template: sampling 
+### IS algorithm : graphical point of view 
+1. Step 1 : sample from proposal ( `\(N=100\)` )
+
+  &lt;img src="IS1.png" alt="IS1"  style="height:60%" class = "centerimg" /&gt;
+
+
+---
+template: sampling 
+### IS algorithm : graphical point of view 
+2. Step 2 : compute weight ( `\(N=100\)` )
+
+  &lt;img src="IS2.png" alt="IS2"  style="height:60%" class = "centerimg" /&gt;
+
+---
+template: sampling 
+### IS algorithm : graphical point of view 
+3. Step 3 : Resample to get unweighted sample ($N=100$)
+
+  &lt;img src="IS3.png" alt="IS3"  style="height:60%" class = "centerimg" /&gt;
+
+
+---
+template: sampling 
+### IS algorithm : graphical point of view 
+3. Step 3 : Resample to get unweighted sample ( `\(N=100\)` )
+
+  &lt;img src="IS4.png" alt="IS4"  style="height:60%" class = "centerimg" /&gt;
+
+
+---
+template: sampling 
+### IS algorithm : graphical point of view  
+3. Step 3 : Resample to get unweighted sample ( `\(N=1000\)` )
+
+  &lt;img src="IS3_1000.png" alt="IS3_1000"  style="height:60%" class = "centerimg" /&gt;
+
+
+---
+template: sampling 
+### IS algorithm : graphical point of view  
+3. Step 3 : Resample to get unweighted sample ($N=1000$)
+
+  &lt;img src="IS4_1000.png" alt="IS4_1000"  style="height:60%" class = "centerimg" /&gt;
+
+
+---
+template: sampling 
+
+### Importance sampling conclusion
+
+* Simple and appealing
+
+* .rouge[But,  it is crucial to have a good proposition distribution.]
+Which is not so straightforward
+
+---
+
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+###  Markov chain definition
+A Markov chain is a sequence of random variables `\((X_1, \ldots,X_n)\)` verifying the Markov property. --
+`$$[X_{i+1}\vert \class{rouge}{X_{1:i}}] = [X_{i+1}\vert \class{rouge}{X_i}].$$`
+--
+
+#### Some examples
+- Ex1: Head or tail: +1 if tail, -1 if head. `\(X_n\)` being the fortune at time `\(n\)`, `\((X_n)\)` is a Markov chain.
+- Ex2: Movement on a grid: at time `\(n\)`, the player moves on one adjacent cell with equal probability. `\(X_n\)` being the position at time `\(n\)`, `\((X_n)\)` is a Markov chain.
+
+
+
+### Markov chain example - Ex1
+
+Random walk 
+`$$X_{n+1} = X_{n} + E_{n+1}, \quad E_{n+1}\overset{ind}{\sim}\mathcal{U}(\{-1,1\})$$`
+`\((X_n)\)` is a Markov chain. \par
+
+
+
+
+
+`\begin{figure}
+\includegraphics[width=0.65\textwidth]{RW1.pdf}
+\end{figure}`
+
+
+
+
+### Markov chain example - Ex1
+
+Supremum of a random walk 
+`\(Z_n = max_{k=1}^n X_k,\)` 
+
+`\begin{figure}
+\includegraphics[width=0.65\textwidth]{SuppRW1.pdf}
+\end{figure}`
+
+--
+`\((Z_n)\)` is not a Markov chain.
+
+
+
+### Markov chain vocabulary
+
+\alert{State space} `\(\mathcal{S}\)`: the set of possible values for `\((X_n)\)`.
+
+\alert{Initial distribution} `\(\nu_0\)`: the distribution for `\(X_0.\)`
+
+\alert{Transition distribution} `\(\pi^{(i)}\)`: the distribution for `\(X_{i+1} \vert X_{i}\)`
+
+\alert{Homogeneity} if `\(\pi^{(i)}\)` does not depend on `\(i\)` the MC is said homogeneous.
+
+
+
+
+### Markov chain example - Ex1
+
+Random walk 
+`$$X_0=0, \quad X_{n+1} = X_{n} + E_{n+1}, \quad E_{n+1}\overset{ind}{\sim}\mathcal{U}(\{-1,1\})$$`
+`\((X_n)\)` is a Markov chain. \par
+
+with 
+- State space `\(\mathcal{S}=\mathbb{Z},\)`\par
+- Initial distribution `\(\nu_0=1_{\left\lbrace x=0\right \rbrace},\)`\par
+- Transition distribution `\(\pi(x, x+1) = 1- \pi(x, x-1) = .5\)`
+
+
+### Markov chain properties
+\footnotesize
+Let `\(X_n\)` be an homogeneous Markov chain on state space `\(\mathcal{S}\)` with initial distribution `\(\nu_0\)` and transition `\(\pi\)`. 
+
+\alert{ Distribution of `\(X_1\)` ?}
+--
+
+`\begin{align}
+\P(X_1 =x) &amp; = \int_{x_0} \P(X_0=x_0, X_1 = x) d_{x_0}\\
+&amp; = \int_{x_0} \pi(x_0, x) \nu_{0}(x_0) d_{x_0}\\
+\end{align}`
+
+On note `\(\nu_0 \pi\)` la loi de `\(X_1\)`.
+
+--
+
+\alert{ Distribution of `\(X_n\)` ?}
+`\begin{align*}
+\P(X_n =x) &amp; = \int_{x_0} \int_{x_1}  \ldots \int_{x_{n-1}}\P(X_0=x_0, X_1 = x_1, \ldots, X_{n-1}=x_{n-1}, X_n = x) d_{x_0}d_{x_1} \ldots d_{x_{n-1}}\\
+&amp; =\int_{x_0} \int_{x_1}  \ldots \int_{x_{n-1}} \nu_0(x_0) \pi(x_0, x_1)  \ldots \pi(x_{n-1}, x)  d_{x_0}d_{x_1} \ldots d_{x_{n-1}}\\
+\end{align*}`
+
+\normalsize
+
+
+### Markov chain properties
+
+\begin{block}{Definition}
+`\(\nu\)` is a stationary distribution if and only if 
+$$ X_i \sim \nu \Longrightarrow X_{i+1} \sim \nu$$  
+\end{block}`
+
+\footnotesize
+
+Example On/Off:
+Let `\(p = (p_0, p_1),\)` and let `\(X_n\)` be defined by 
+$$ X_0 \sim \mathcal{B}(p_{init}), \quad X_{n+1}\vert X_n \sim \mathcal{B}(p_{X_n})$$
+
+`\begin{figure}
+\includegraphics[height=0.4\textheight]{OnOff.pdf}
+\end{figure}`
+--
+
+\class{rouge}{Distribution of `\(X_1\)`, `\(X_2\)`, ... ?}
+
+
+###  Markov chain properties
+
+\begin{block}{Ergodic property}
+
+If a Markov chain `\((X_i)\)` is irreducible, aperiodic and recurrent then there is exists a unique stationnary distribution `\(\pi\)` and
+$$[X_n] \underset{n\to \infty}{\longrightarrow } \pi . $$
+
+\end{block}`
+
+If a Markov chain `\((X_i)\)` is reversible ($[X_i][X_{i+1}\vert X_i] = [X_{i+1}] [X_i\vert X_{i+1}]$) then this Markov chain admits a stationary distribution. 
+
+
+### Consequences of the ergodic theorem
+
+If `\((X_n)\)` is a Markov chain with stationary distribution, for any initial `\(\nu_0\)`, `\([X_n]\)` is close to the stationary distribution.
+--
+
+
+\alert{Back to the example on/off:}       
+
+&lt;img src="index_files/figure-html/on_off-1.png" width="60%" /&gt;
+
+### Consequences of the ergodic theorem
+
+If `\((X_n)\)` is a Markov chain with stationary distribution, for any initial `\(\nu_0\)`, `\([X_n]\)` is close to the stationary distribution.
+--
+
+
+\alert{Back to the example on/off:}       
+
+
+
+&lt;img src="index_files/figure-html/first100-1.png" width="60%" /&gt;
+
+
+
+### Metropolis Hastings algorithm
+
+Key idea : building a reversible Markov chain with `\([\theta\vert y]\)` as stationnary distribution
+--
+
+1. Initialization   `\(\theta^{(0)}\)` an admissible initial value
+2. For i in 1:nIter
+  + Propose a new candidate value `\(\theta_c^{(i)}\)` sampled from a proposal distribution `\(g(. \vert \theta^{(i-1)})\)`
+  + Compute Metropolis Hastings ratio
+    $$ r_i=\class{bleu}{\frac{[y\vert \theta_c^{(i)}] [\theta_c^{(i)} ] }{[y\vert \theta^{(i-1)}] [\theta^{(i-1)} ] } } \class{rouge}{\frac{g(\theta^{(i-1)} \vert \theta_c^{(i)})}{g(\theta_c^{(i)} \vert \theta^{(i-1)})}}$$
+    + Define 
+    $$ \theta^{(i)} =\left \lbrace
+    \begin{array}{l}
+    \theta_c^{(i)} \mbox{ with probability } min( r_i,1) \\
+    \theta^{(i-1)} \mbox{ with probability } 1-min( r_i,1) \\
+    \end{array}\right.$$`
+
+
+
+
+
+### Capture efficiency estimation
+
+20 fishes have been released around a trap, and 5 of them are caught. 
+
+1. Propose a model of the experiment
+2. Define the parameter(s) of interest
+3. Characterize the prosterior distribution
+  - analytically
+  - by simulation
+  
+
+
+### Capture efficiency estimation using jags
+
+see capture.R
+
+
+### Capture Recapture
+
+Experimental design:
+
+- `\(M=50\)` fishes are marked and released in a lake.
+
+- a trap is set in the lake
+  - `\(R=25\)` fish caught are marked
+  - `\(R=133\)` fish caught are unmarked
+  
+How to estimate the total size of the population ?  
+
+
+
+
+### References
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../courses_tools/resources/collapseoutput.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:10",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

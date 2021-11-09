@@ -328,7 +328,7 @@ template: sampling
 ### Quantities of interest 
 
 .center[
-`$$E[\class{bleu}{p}\vert  \class{vert}{y}] =  ?,  \quad CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) =  ?$$`
+`$$E[\class{bleu}{p}\vert  \class{vert}{y}] =  ?,  \quad CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) =  ?, \quad E[\class{bleu}{h(p)}\vert  \class{vert}{y}] =  ?$$`
 ]
 
 --
@@ -348,11 +348,12 @@ template: sampling
 ### Quantities of interest 
 
 .center[
-`$$E[\class{bleu}{p}\vert  \class{vert}{y}] =  ?,  \quad CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) =  ?$$`
+`$$E[\class{bleu}{p}\vert  \class{vert}{y}] =  ?,  \quad CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) =  ?, \quad E[\class{bleu}{h(p)}\vert  \class{vert}{y}] =  ?$$`
 ]
 
---
+.center[ .rouge[Monte Carlo methods]]
 
+--
 .pull-left[
 
 
@@ -364,6 +365,7 @@ template: sampling
 
 * `\(E[\class{bleu}{p}\vert  \class{vert}{y}] \approx \frac{1}{n} \sum_{k=1}^n p_i\)`
 * `\(CI_{0.95}(\class{bleu}{p}\vert  \class{vert}{y}) \approx [p_{(n*0.025)}, p_{(n*0.975)} ] ?\)`
+* `\(E[\class{bleu}{h(p)}\vert  \class{vert}{y}] \approx \frac{1}{n} \sum_{k=1}^n h(p_i)\)`
 
 ]
 
@@ -382,18 +384,13 @@ Monte Carlo Approximation
 
 ```
 ##       Sum    Theory     MC100    MC1000
-##      Mean 0.3571429 0.3508480 0.3588935
-## 5%  CIInf 0.2166169 0.2226342 0.2185822
-## 95% CISup 0.5094782 0.4790291 0.5157988
+##      Mean 0.3571429 0.3580891 0.3591010
+## 5%  CIInf 0.2166169 0.2438286 0.2235640
+## 95% CISup 0.5094782 0.5022479 0.5034468
 ```
 
 
-.center[
-.rouge[
-Monte Carlo Approximation
-]
-]
-]
+
 
 
 
@@ -416,35 +413,6 @@ E_{d_X}(\class{bleu}{h(X)}) &amp; = \int_u \class{bleu}{h(u)} \, d_{X}(u) du \cr
 
 
 
-```
-## Warning: Removed 2 rows containing missing values (geom_bar).
-```
-
-```
-## Warning: Removed 2 rows containing missing values (geom_bar).
-```
-
-```
-## Warning: Removed 1 rows containing missing values (geom_point).
-```
-
-```
-## Warning: Removed 1 rows containing missing values (geom_point).
-
-## Warning: Removed 1 rows containing missing values (geom_point).
-```
-
-```
-## Warning: Removed 1 rows containing missing values (geom_point).
-```
-
-```
-## Warning: Removed 2 rows containing missing values (geom_bar).
-```
-
-```
-## Warning: Removed 2 rows containing missing values (geom_bar).
-```
 ---
 
 template: sampling 
@@ -543,6 +511,7 @@ template: sampling
 Which is not so straightforward
 
 ---
+template: sampling 
 
 ## Monte Carlo Markov Chain algorithm (MCMC)
 
@@ -556,151 +525,207 @@ A Markov chain is a sequence of random variables `\((X_1, \ldots,X_n)\)` verifyi
 - Ex2: Movement on a grid: at time `\(n\)`, the player moves on one adjacent cell with equal probability. `\(X_n\)` being the position at time `\(n\)`, `\((X_n)\)` is a Markov chain.
 
 
+---
+template: sampling 
 
+## Monte Carlo Markov Chain algorithm (MCMC)
 ### Markov chain example - Ex1
 
 Random walk 
 `$$X_{n+1} = X_{n} + E_{n+1}, \quad E_{n+1}\overset{ind}{\sim}\mathcal{U}(\{-1,1\})$$`
-`\((X_n)\)` is a Markov chain. \par
+`\((X_n)\)` is a Markov chain.  
 
 
 
 
 
-`\begin{figure}
-\includegraphics[width=0.65\textwidth]{RW1.pdf}
-\end{figure}`
+
+&lt;img src="RW1.png" alt="RW1"  style="width:40%" class = "centerimg" /&gt;
 
 
+---
+template: sampling 
 
+## Monte Carlo Markov Chain algorithm (MCMC)
 
-### Markov chain example - Ex1
+### Markov chain example - Counterexample
+
+Random walk 
+`$$X_{n+1} = X_{n} + E_{n+1}, \quad E_{n+1}\overset{ind}{\sim}\mathcal{U}(\{-1,1\})$$`
 
 Supremum of a random walk 
-`\(Z_n = max_{k=1}^n X_k,\)` 
+`\(Z_n = max_{k=1}^n X_k,\)` `\((Z_n)\)` is not a Markov chain.
 
-`\begin{figure}
-\includegraphics[width=0.65\textwidth]{SuppRW1.pdf}
-\end{figure}`
-
---
-`\((Z_n)\)` is not a Markov chain.
+&lt;img src="SuppRW1.png" alt="SuppRW1"  style="width:40%" class = "centerimg" /&gt;
 
 
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 ### Markov chain vocabulary
 
-\alert{State space} `\(\mathcal{S}\)`: the set of possible values for `\((X_n)\)`.
+.rouge[State space] `\(\mathcal{S}\)`: the set of possible values for `\((X_n)\)`.
 
-\alert{Initial distribution} `\(\nu_0\)`: the distribution for `\(X_0.\)`
+.rouge[Initial distribution] `\(\nu_0\)`: the distribution for `\(X_0.\)`
 
-\alert{Transition distribution} `\(\pi^{(i)}\)`: the distribution for `\(X_{i+1} \vert X_{i}\)`
+.rouge[Transition distribution] `\(\pi^{(i)}\)`: the distribution for `\(X_{i+1} \vert X_{i}\)`
 
-\alert{Homogeneity} if `\(\pi^{(i)}\)` does not depend on `\(i\)` the MC is said homogeneous.
+.rouge[Homogeneity] if `\(\pi^{(i)}\)` does not depend on `\(i\)` the MC is said homogeneous.
 
 
+
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 
 ### Markov chain example - Ex1
 
 Random walk 
 `$$X_0=0, \quad X_{n+1} = X_{n} + E_{n+1}, \quad E_{n+1}\overset{ind}{\sim}\mathcal{U}(\{-1,1\})$$`
-`\((X_n)\)` is a Markov chain. \par
+`\((X_n)\)` is a Markov chain.  
 
 with 
-- State space `\(\mathcal{S}=\mathbb{Z},\)`\par
-- Initial distribution `\(\nu_0=1_{\left\lbrace x=0\right \rbrace},\)`\par
-- Transition distribution `\(\pi(x, x+1) = 1- \pi(x, x-1) = .5\)`
+- State space 
+--
+ `\(\mathcal{S}=\mathbb{Z},\)` 
 
+- Initial distribution 
+--
+`\(\nu_0=1_{\left\lbrace x=0\right \rbrace},\)`
+
+- Transition distribution
+--
+ `\(\pi(x, x+1) = 1- \pi(x, x-1) = .5\)`
+
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 ### Markov chain properties
-\footnotesize
+
 Let `\(X_n\)` be an homogeneous Markov chain on state space `\(\mathcal{S}\)` with initial distribution `\(\nu_0\)` and transition `\(\pi\)`. 
 
-\alert{ Distribution of `\(X_1\)` ?}
+.rouge[ Distribution of `\(X_1\)`?]
+
 --
 
-`\begin{align}
-\P(X_1 =x) &amp; = \int_{x_0} \P(X_0=x_0, X_1 = x) d_{x_0}\\
+`$$\begin{aligned}
+\mathbb{P}(X_1 =x) &amp; = \int_{x_0}    \mathbb{P}(X_0=x_0, X_1 = x) d_{x_0}\\
 &amp; = \int_{x_0} \pi(x_0, x) \nu_{0}(x_0) d_{x_0}\\
-\end{align}`
+\end{aligned}$$`
+
+--
 
 On note `\(\nu_0 \pi\)` la loi de `\(X_1\)`.
 
 --
 
-\alert{ Distribution of `\(X_n\)` ?}
-`\begin{align*}
-\P(X_n =x) &amp; = \int_{x_0} \int_{x_1}  \ldots \int_{x_{n-1}}\P(X_0=x_0, X_1 = x_1, \ldots, X_{n-1}=x_{n-1}, X_n = x) d_{x_0}d_{x_1} \ldots d_{x_{n-1}}\\
+.rouge[ Distribution of `\(X_n\)`?]
+
+
+`$$\begin{aligned}
+\mathbb{P}(X_n =x) &amp; = \int_{x_0} \int_{x_1}  \ldots \int_{x_{n-1}}\mathbb{P}(X_0=x_0, X_1 = x_1, \ldots, X_{n-1}=x_{n-1}, X_n = x) d_{x_0}d_{x_1} \ldots d_{x_{n-1}}\\
 &amp; =\int_{x_0} \int_{x_1}  \ldots \int_{x_{n-1}} \nu_0(x_0) \pi(x_0, x_1)  \ldots \pi(x_{n-1}, x)  d_{x_0}d_{x_1} \ldots d_{x_{n-1}}\\
-\end{align*}`
+\end{aligned}$$`
 
-\normalsize
 
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 ### Markov chain properties
 
-\begin{block}{Definition}
-`\(\nu\)` is a stationary distribution if and only if 
-$$ X_i \sim \nu \Longrightarrow X_{i+1} \sim \nu$$  
-\end{block}`
+.bleu[Definition]: `\(\nu\)` is a stationary distribution if and only if 
+`$$X_i \sim \nu \Longrightarrow X_{i+1} \sim \nu$$`  
 
-\footnotesize
-
-Example On/Off:
-Let `\(p = (p_0, p_1),\)` and let `\(X_n\)` be defined by 
-$$ X_0 \sim \mathcal{B}(p_{init}), \quad X_{n+1}\vert X_n \sim \mathcal{B}(p_{X_n})$$
-
-`\begin{figure}
-\includegraphics[height=0.4\textheight]{OnOff.pdf}
-\end{figure}`
 --
 
-\class{rouge}{Distribution of `\(X_1\)`, `\(X_2\)`, ... ?}
+
+.pull-left[
+Example On/Off:
+Let `\(p = (p_0, p_1),\)` and let `\(X_n\)` be defined by 
+`$$X_0 \sim \mathcal{B}(p_{init}), \quad X_{n+1}\vert X_n \sim \mathcal{B}(p_{X_n})$$`
+]
+
+.pull-right[
+
+  &lt;img src="sim1.png" alt="Simulation"  style="width:90%" class = "centerimg" /&gt;
+
+]
+
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+.rouge[Distribution of `\(X_1\)`, `\(X_2\)`, ... ?]
 
 
 ###  Markov chain properties
 
-\begin{block}{Ergodic property}
-
+.rouge[Ergodic property]
 If a Markov chain `\((X_i)\)` is irreducible, aperiodic and recurrent then there is exists a unique stationnary distribution `\(\pi\)` and
 $$[X_n] \underset{n\to \infty}{\longrightarrow } \pi . $$
 
-\end{block}`
 
-If a Markov chain `\((X_i)\)` is reversible ($[X_i][X_{i+1}\vert X_i] = [X_{i+1}] [X_i\vert X_{i+1}]$) then this Markov chain admits a stationary distribution. 
+If a Markov chain `\((X_i)\)` is reversible ( `\([X_i][X_{i+1}\vert X_i] = [X_{i+1}] [X_i\vert X_{i+1}]\)` ) then this Markov chain admits a stationary distribution. 
 
 
 ### Consequences of the ergodic theorem
 
 If `\((X_n)\)` is a Markov chain with stationary distribution, for any initial `\(\nu_0\)`, `\([X_n]\)` is close to the stationary distribution.
---
+
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 
-\alert{Back to the example on/off:}       
 
-&lt;img src="index_files/figure-html/on_off-1.png" width="60%" /&gt;
+.rouge[Back to the example on/off:]       
+
+
+
+  &lt;img src="sim1_tot.png" alt="Simulation"  style="height:30%" class = "centerimg" /&gt;
+
+
+---
+template: sampling 
+
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+.rouge[Back to the example on/off:]       
 
 ### Consequences of the ergodic theorem
 
-If `\((X_n)\)` is a Markov chain with stationary distribution, for any initial `\(\nu_0\)`, `\([X_n]\)` is close to the stationary distribution.
---
+.pull-left[
+  &lt;img src="distrib_90.png" alt="Simulation"  style="width:90%" class = "centerimg" /&gt;
+]
 
+.pull-right[
+  &lt;img src="distrib_100.png" alt="Simulation"  style="width:90%" class = "centerimg" /&gt;
 
-\alert{Back to the example on/off:}       
+]
 
+---
+template: sampling 
 
-
-&lt;img src="index_files/figure-html/first100-1.png" width="60%" /&gt;
-
-
+## Monte Carlo Markov Chain algorithm (MCMC)
 
 ### Metropolis Hastings algorithm
 
-Key idea : building a reversible Markov chain with `\([\theta\vert y]\)` as stationnary distribution
+.rouge[Key idea:] building a reversible Markov chain with `\([\theta\vert y]\)` as stationnary distribution
+
 --
 
 1. Initialization   `\(\theta^{(0)}\)` an admissible initial value
+--
 2. For i in 1:nIter
   + Propose a new candidate value `\(\theta_c^{(i)}\)` sampled from a proposal distribution `\(g(. \vert \theta^{(i-1)})\)`
   + Compute Metropolis Hastings ratio
@@ -716,7 +741,13 @@ Key idea : building a reversible Markov chain with `\([\theta\vert y]\)` as stat
 
 
 
-### Capture efficiency estimation
+---
+name: fish
+# Finally an example
+&lt;img class="logopos_right" src="fish_logo.png" style="width:4%"&gt;
+
+--
+## Capture efficiency estimation
 
 20 fishes have been released around a trap, and 5 of them are caught. 
 
@@ -726,14 +757,16 @@ Key idea : building a reversible Markov chain with `\([\theta\vert y]\)` as stat
   - analytically
   - by simulation
   
+--
 
+## Capture efficiency estimation using jags
 
-### Capture efficiency estimation using jags
+see [capture.R](capture.R)
 
-see capture.R
+---
+template: fish
 
-
-### Capture Recapture
+## Capture Recapture
 
 Experimental design:
 
@@ -746,9 +779,6 @@ Experimental design:
 How to estimate the total size of the population ?  
 
 
-
-
-### References
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

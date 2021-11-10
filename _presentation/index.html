@@ -236,6 +236,7 @@ template: analytic
 
 ## Regression model 
 
+--
 .pull-left[
 * Model : `\(\class{vert}{Y_k}=\class{bleu}{\beta_0} + \class{bleu}{\beta_1} \class{orange}{x_k} +E_k, \quad E_k\overset{ind}{\sim}\mathcal{N}(0,\class{orange}{\sigma^2})\)`
 * Parameter: `\(\class{bleu}{\beta_0}, \class{bleu}{\beta_1}\)`.
@@ -246,6 +247,7 @@ with `\(\Lambda_{prior}\)` denoting the precision matrix, i.e `\(\Sigma_{prior}^
 
 ]
 
+--
 .pull-right[
 &lt;img src="img/DAG_norm.png" width="70%" /&gt;
 ]
@@ -384,9 +386,9 @@ Monte Carlo Approximation
 
 ```
 ##       Sum    Theory     MC100    MC1000
-##      Mean 0.3571429 0.3428849 0.3545116
-## 5%  CIInf 0.2166169 0.2093502 0.2107632
-## 95% CISup 0.5094782 0.4965920 0.5096819
+##      Mean 0.3571429 0.3537323 0.3592575
+## 5%  CIInf 0.2166169 0.1961929 0.2252984
+## 95% CISup 0.5094782 0.4880688 0.5108523
 ```
 
 

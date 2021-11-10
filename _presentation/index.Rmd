@@ -277,6 +277,7 @@ template: analytic
 
 ## Regression model 
 
+--
 .pull-left[
 * Model : $\class{vert}{Y_k}=\class{bleu}{\beta_0} + \class{bleu}{\beta_1} \class{orange}{x_k} +E_k, \quad E_k\overset{ind}{\sim}\mathcal{N}(0,\class{orange}{\sigma^2})$
 * Parameter: $\class{bleu}{\beta_0}, \class{bleu}{\beta_1}$.
@@ -287,6 +288,7 @@ with $\Lambda_{prior}$ denoting the precision matrix, i.e $\Sigma_{prior}^{-1}$.
 
 ]
 
+--
 .pull-right[
 ```{r DAG_normal, echo = FALSE, eval = TRUE, out.width = '70%'}
 knitr::include_graphics('img/DAG_norm.png')

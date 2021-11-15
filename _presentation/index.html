@@ -153,7 +153,7 @@ with `\(K\)` a constant (in terms of `\(p\)`) to be determined.
 0 \quad \mbox{otherwise}\cr
 \end{array}\right.$$`
 
-See [Cheatsheet distribution](LoiProbas.pdf)
+See [Cheatsheet distribution](https://marieetienne.github.io/slides/LoiProbas.pdf)
 
 ---
 template: analytic
@@ -386,9 +386,9 @@ Monte Carlo Approximation
 
 ```
 ##       Sum    Theory     MC100    MC1000
-##      Mean 0.3571429 0.3537323 0.3592575
-## 5%  CIInf 0.2166169 0.1961929 0.2252984
-## 95% CISup 0.5094782 0.4880688 0.5108523
+##      Mean 0.3571429 0.3467515 0.3605131
+## 5%  CIInf 0.2166169 0.2105435 0.2166376
+## 95% CISup 0.5094782 0.5020969 0.5124768
 ```
 
 
@@ -727,7 +727,9 @@ template: sampling
 --
 
 1. Initialization   `\(\theta^{(0)}\)` an admissible initial value
+
 --
+
 2. For i in 1:nIter
   + Propose a new candidate value `\(\theta_c^{(i)}\)` sampled from a proposal distribution `\(g(. \vert \theta^{(i-1)})\)`
   + Compute Metropolis Hastings ratio
@@ -735,11 +737,21 @@ template: sampling
     + Define 
     $$ \theta^{(i)} =\left \lbrace
     \begin{array}{l}
-    \theta_c^{(i)} \mbox{ with probability } min( r_i,1) \\
-    \theta^{(i-1)} \mbox{ with probability } 1-min( r_i,1) \\
+    \theta_c^{(i)} \mbox{ with probability } min( r_i,1) \cr
+    \theta^{(i-1)} \mbox{ with probability } 1-min( r_i,1) \cr
     \end{array}\right.$$`
 
 
+
+
+---
+template: sampling 
+
+## Sampling from  a bivariate normal
+
+Target distribution : \class{orange}{ A bivariate normal distribution} 
+
+![](index_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
 
 
 

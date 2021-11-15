@@ -177,7 +177,7 @@ $$d_X(t)=\left\lbrace
 0 \quad \mbox{otherwise}\cr
 \end{array}\right.$$
 
-See [Cheatsheet distribution](LoiProbas.pdf)
+See [Cheatsheet distribution](https://marieetienne.github.io/slides/LoiProbas.pdf)
 
 ---
 template: analytic
@@ -906,7 +906,9 @@ template: sampling
 --
 
 1. Initialization   $\theta^{(0)}$ an admissible initial value
+
 --
+
 2. For i in 1:nIter
   + Propose a new candidate value $\theta_c^{(i)}$ sampled from a proposal distribution $g(. \vert \theta^{(i-1)})$
   + Compute Metropolis Hastings ratio
@@ -914,14 +916,57 @@ template: sampling
     + Define 
     $$ \theta^{(i)} =\left \lbrace
     \begin{array}{l}
-    \theta_c^{(i)} \mbox{ with probability } min( r_i,1) \\
-    \theta^{(i-1)} \mbox{ with probability } 1-min( r_i,1) \\
+    \theta_c^{(i)} \mbox{ with probability } min( r_i,1) \cr
+    \theta^{(i-1)} \mbox{ with probability } 1-min( r_i,1) \cr
     \end{array}\right.$$
 
 
 ```{r ggplot_back, echo = FALSE, eval = TRUE}
 ggplot <- function(...) ggplot2::ggplot(...) 
 ```
+
+---
+template: sampling 
+
+## Sampling from  a bivariate normal
+
+Target distribution : \class{orange}{ A bivariate normal distribution} 
+
+```{r, echo = FALSE}
+mu_target <- matrix(c(0,0), ncol =2)
+cov_target <- matrix(c(2, 1.8, 1.8 ,5), ncol= 2)
+
+library(mvtnorm)
+library(wesanderson)
+ data.grid <- expand.grid(s.1 = seq(-5, 5, length.out=500), s.2 = seq(-5, 5, length.out = 500)) %>% 
+  as_tibble() %>% 
+  mutate( z = dmvnorm(x= cbind(s.1, s.2), mean = mu_target, sigma = cov_target))
+p_target <-data.grid %>% 
+  ggplot() + geom_tile(aes(x=s.1, y = s.2, fill = z))  + 
+  scale_fill_gradient2( high = "#C94326", mid = "#F1D763", low = "#33658A", midpoint = 0.03)
+
+
+niter <- 100
+sd_prop <-  0.1
+pos <- data.frame(x = rep(NA, niter), y = rep(NA,niter))
+pos[1,] <- c(-2,2)
+for(i in 1: (niter-1)){
+  xprop <- rnorm(1, mean = pos[i,1], sd = sd_prop)
+  yprop <- rnorm(1, mean = pos[i,2], sd = sd_prop)
+  
+  ratio_prop   <- dnorm(pos[i,1], mean=xprop, sd= sd_prop) *  dnorm(pos[i,2], mean=yprop, sd= sd_prop) / dnorm(xprop, mean=pos[i,1], sd= sd_prop) *  dnorm(yprop, mean=pos[i,2], sd= sd_prop)
+  ratio_target   <- dmvnorm(c(xprop, yprop), mean = mu_target, sigma = cov_target) / dmvnorm(c(pos[i,1], pos[i,2]), mean = mu_target, sigma = cov_target) 
+  r <- ratio_target*ratio_prop
+  u <- runif(1)
+  pos[i+1,1 ]= ifelse(u< r , xprop, pos[i,1])
+  pos[i+1,2 ]= ifelse(u< r , yprop, pos[i,2])
+}
+
+
+p_target + geom_path(data = pos, aes(x=x, y = y))
+
+```
+
 
 
 ---

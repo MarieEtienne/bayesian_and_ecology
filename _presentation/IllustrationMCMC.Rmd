@@ -1,9 +1,27 @@
 ---
-title: "Implementing its own MCMC algorithm"
-author: "Marie Etienne, Etienne Rivot"
-date: "November 2022"
-output: html
+title: Building and estimating a first Bayesian model
+author: Marie-Pierre Etienne, Etienne Rivot 
+institute: "https://marieetienne.github.io/bayesian_and_ecology"
+date: "M2 Mode - Data science"
+csl: "../resources/apa-no-doi-no-issue.csl"
+output:
+   xaringan::moon_reader:
+    css: ['metropolis',  'mpe_pres.css']
+    lib_dir: libs
+    nature:
+      ratio: 16:10
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: '../courses_tools/resources/collapseoutput.js'
 ---
+
+
+```{r datapackage, eval = TRUE, echo = FALSE, warning = FALSE}
+ggplot <- function(...) ggplot2::ggplot(...) + scale_fill_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) 
+#remotes::install_github('MarieEtienne/coursesdata', force = TRUE)
+```
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -16,18 +34,20 @@ mypal <- wesanderson::wes_palette("Darjeeling1")
 theme_set(theme_light())
 ```
 
-
+---
+name: coin 
 # Tossing a coin
+--
 
 While tossing a coin 53 times, we got 9 tails. What could we say on the probability to get a tail ?
-
 ## Model of experiment
 
 We model the experiment by 
 $$ Y \sim \mathcal{B}(m, p),$$ 
 with $p$ the probability to get a tail and $m$ the total number of trials. 
 
-
+---
+template: coin
 ## Modelling the prior knowledge on $p$
 
 As we never used that coin, we would like to add no information in the prior information. FIrst guess
@@ -37,13 +57,18 @@ $$ p \sim \mathcal{U}(0,1)$$
 which is equivalent to
 
 $$ p \sim \mathcal{B}eta(1,1)$$
-
+---
+template: coin
 ## Theoretical posterior distribution
 
 The full bayesian specification for the model is a so called beta binomial model which has analytical posterior distribution.
 
 $$\pi(p\vert  Y_{obs}) \sim \mathcal{B}eta(Y_{obs} + 1,  m-Y_{obs} +1)$$
+---
+template: coin
+## Theoretical posterior distribution
 
+Graphically
 
 ```{r}
 Y <- 9
@@ -63,16 +88,16 @@ p + stat_prior +stat_post
 
 ```
 
-
+---
+name: sampling
 # Sampling from the posterior distribution
 
-
-## Model specification
+--
+## Practical Model specification
 
 
 ```{r model_specification, echo = TRUE}
-sink("model1.txt")
-cat("
+model <- "
 model{
 
   ## model 
@@ -82,11 +107,14 @@ model{
   p ~ dbeta(1, 1)
 
 } # end model
-",fill = TRUE)
-sink()
+"
+
 ```
 
 
+
+---
+template: sampling
 ## Data specification 
 
 ```{r data}
@@ -96,6 +124,9 @@ data_list <- list(
 )
 ```
 
+
+---
+template: sampling
 ## Initialisation 
 
 
@@ -107,11 +138,14 @@ init_list <- list(
 
 
 
+
+---
+template: sampling
 ## Combining, model and data
 
 
 ```{r jags_model}
-mjags <- jags.model(file="model1.txt", 
+mjags <- jags.model(file=textConnection(model), 
                     data=data_list,
                     inits=init_list, 
                     n.chains = 3)
@@ -119,7 +153,13 @@ mjags <- jags.model(file="model1.txt",
 ```
 
 
+
+---
+template: sampling
+## Sampling from the posterior
+
 We are interested in the posteriori distribution of $p$
+
 
 ```{r postsamples}
 postSamples <- coda.samples(mjags, 
@@ -130,7 +170,9 @@ postSamples <- coda.samples(mjags,
 ```
 
 
-## Comparing sampler and theoretical distributions
+---
+template: sampling
+## Comparing sampled and theoretical distributions
 
 
 ```{r}
@@ -148,6 +190,8 @@ postSamples_df %>%
 
 
 
+---
+template: sampling
 # Model and data
 
 While monitoring a large population of size $n$ unknown, $m$ individuals have been marked and released.

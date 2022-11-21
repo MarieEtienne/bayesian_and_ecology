@@ -15,7 +15,9 @@ jobs:
         with:
           submodules: recursive
       - name: Generate slides
-        run: Rscript courses_tools/R/render_site.R
+        run: |
+          Rscript -e "install.packages(c('ggmcmc', 'rjags'))"
+          Rscript courses_tools/R/render_site.R
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:

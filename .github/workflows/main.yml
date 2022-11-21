@@ -16,6 +16,7 @@ jobs:
           submodules: recursive
       - name: Generate slides
         run: |
+          apt install jags
           Rscript -e "install.packages(c('ggmcmc', 'rjags'))"
           Rscript courses_tools/R/render_site.R
       - name: Deploy

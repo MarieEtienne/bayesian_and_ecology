@@ -1,0 +1,185 @@
+---
+title: "Implementing its own MCMC algorithm"
+author: "Marie Etienne, Etienne Rivot"
+date: "November 2022"
+output: html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(rjags)
+library(ggmcmc)
+
+
+mypal <- wesanderson::wes_palette("Darjeeling1")
+theme_set(theme_light())
+```
+
+
+# Tossing a coin
+
+While tossing a coin 53 times, we got 9 tails. What could we say on the probability to get a tail ?
+
+## Model of experiment
+
+We model the experiment by 
+$$ Y \sim \mathcal{B}(m, p),$$ 
+with $p$ the probability to get a tail and $m$ the total number of trials. 
+
+
+## Modelling the prior knowledge on $p$
+
+As we never used that coin, we would like to add no information in the prior information. FIrst guess
+
+$$ p \sim \mathcal{U}(0,1)$$
+
+which is equivalent to
+
+$$ p \sim \mathcal{B}eta(1,1)$$
+
+## Theoretical posterior distribution
+
+The full bayesian specification for the model is a so called beta binomial model which has analytical posterior distribution.
+
+$$\pi(p\vert  Y_{obs}) \sim \mathcal{B}eta(Y_{obs} + 1,  m-Y_{obs} +1)$$
+
+
+```{r}
+Y <- 9
+m <- 53
+```
+
+```{r}
+s1 <- 1
+s2 <- 1
+dta <- data.frame(x=seq(0,1, length.out = 100))
+p <- ggplot(data = dta)
+stat_post <- stat_function(data = dta, aes(x = x, y = ..y..), fun = dbeta, colour=mypal[1], n = 100,
+                      args = list(shape1 = Y+s1, shape2 = m-Y+s2))
+stat_prior <- stat_function(data = dta, aes(x = x, y = ..y..), fun = dbeta, colour=mypal[2], n = 100,
+                      args = list(shape1 = s1, shape2 = s2))
+p + stat_prior +stat_post 
+
+```
+
+
+# Sampling from the posterior distribution
+
+
+## Model specification
+
+
+```{r model_specification, echo = TRUE}
+sink("model1.txt")
+cat("
+model{
+
+  ## model 
+  Y ~ dbinom(p, m)
+
+  ## Prior distribution
+  p ~ dbeta(1, 1)
+
+} # end model
+",fill = TRUE)
+sink()
+```
+
+
+## Data specification 
+
+```{r data}
+data_list <- list(
+  m = 53,
+  Y = 9
+)
+```
+
+## Initialisation 
+
+
+```{r init}
+init_list <- list(
+  p=0.1
+)
+```
+
+
+
+## Combining, model and data
+
+
+```{r jags_model}
+mjags <- jags.model(file="model1.txt", 
+                    data=data_list,
+                    inits=init_list, 
+                    n.chains = 3)
+
+```
+
+
+We are interested in the posteriori distribution of $p$
+
+```{r postsamples}
+postSamples <- coda.samples(mjags, 
+                            variable.names = c("p"),
+                            n.iter = 50000, 
+                            thin = 100)
+
+```
+
+
+## Comparing sampler and theoretical distributions
+
+
+```{r}
+## a nicer format 
+postSamples_df <-  postSamples %>% ggs()
+
+postSamples_df %>%
+  ggplot() + 
+  facet_wrap(~as.factor(Chain)) +
+  geom_histogram(data = postSamples_df, aes(x= value, y =..density.., fill = as.factor(Chain)), position = "identity", alpha = 0.7) + scale_fill_manual(values = wesanderson::wes_palette("FantasticFox1", n = 5)) + 
+  stat_prior +
+  stat_post   
+```
+
+
+
+
+# Model and data
+
+While monitoring a large population of size $n$ unknown, $m$ individuals have been marked and released.
+The population might be considered as $m$ marked individuals and $n-m$ unmarked individuals. 
+A recapture experiment leads to $YM$ marked animals and $YNM$ unmarked. 
+
+m = 53, YM = 9 and YNM = 75 ?
+
+
+
+What is the size of the population ?
+
+
+
+
+## Estimating the capture efficiency
+
+The probability of capture might be infered from the recapture dataset and the experiment might be modelled as 
+\begin{equation}
+ YM \sim \mathcal{B}(m, p).
+\end{equation}
+
+The capture mark recapture experiment has been used for the first time on these conditions. Few is known on the probability of capture. Therefore an uniform prior is chosen to model the a priori knowledge on $p$.
+
+## Data
+```{r}
+m <- 53
+YM <- 9
+```
+
+
+
+and let's discuss for the rest !
+
+

@@ -68,20 +68,7 @@ Y &lt;- 9
 m &lt;- 53
 ```
 
-
-```r
-s1 &lt;- 1
-s2 &lt;- 1
-dta &lt;- data.frame(x=seq(0,1, length.out = 100))
-p &lt;- ggplot(data = dta)
-stat_post &lt;- stat_function(data = dta, aes(x = x, y = ..y..), fun = dbeta, colour=mypal[1], n = 100,
-                      args = list(shape1 = Y+s1, shape2 = m-Y+s2))
-stat_prior &lt;- stat_function(data = dta, aes(x = x, y = ..y..), fun = dbeta, colour=mypal[2], n = 100,
-                      args = list(shape1 = s1, shape2 = s2))
-p + stat_prior +stat_post 
-```
-
-![](IllustrationMCMC_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+![](IllustrationMCMC_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
 
 ---
 name: sampling
@@ -185,17 +172,118 @@ template: sampling
 
 
 
+
+
+
+
+---
+
+count: false
+ 
+
+.panel1-post_sample-auto[
+
 ```r
-## a nicer format 
+## a nicer format
+*postSamples_df &lt;-  postSamples %&gt;% ggs()
+```
+]
+ 
+.panel2-post_sample-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-post_sample-auto[
+
+```r
+## a nicer format
+postSamples_df &lt;-  postSamples %&gt;% ggs()
+
+*postSamples_df
+```
+]
+ 
+.panel2-post_sample-auto[
+
+```
+## # A tibble: 1,500 x 4
+##    Iteration Chain Parameter  value
+##        &lt;int&gt; &lt;int&gt; &lt;fct&gt;      &lt;dbl&gt;
+##  1         1     1 p         0.186 
+##  2         2     1 p         0.203 
+##  3         3     1 p         0.149 
+##  4         4     1 p         0.178 
+##  5         5     1 p         0.161 
+##  6         6     1 p         0.192 
+##  7         7     1 p         0.140 
+##  8         8     1 p         0.185 
+##  9         9     1 p         0.125 
+## 10        10     1 p         0.0915
+## # … with 1,490 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-post_sample-auto[
+
+```r
+## a nicer format
 postSamples_df &lt;-  postSamples %&gt;% ggs()
 
 postSamples_df %&gt;%
-  ggplot() + 
-  facet_wrap(~as.factor(Chain)) +
-  geom_histogram(data = postSamples_df, aes(x= value, y =..density.., fill = as.factor(Chain)), position = "identity", alpha = 0.7) + scale_fill_manual(values = wesanderson::wes_palette("FantasticFox1", n = 5)) + 
-  stat_prior +
-  stat_post   
+* ggplot()
 ```
+]
+ 
+.panel2-post_sample-auto[
+![](IllustrationMCMC_files/figure-html/post_sample_auto_03_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-post_sample-auto[
+
+```r
+## a nicer format
+postSamples_df &lt;-  postSamples %&gt;% ggs()
+
+postSamples_df %&gt;%
+  ggplot() +
+* facet_wrap(~as.factor(Chain))
+```
+]
+ 
+.panel2-post_sample-auto[
+![](IllustrationMCMC_files/figure-html/post_sample_auto_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-post_sample-auto[
+
+```r
+## a nicer format
+postSamples_df &lt;-  postSamples %&gt;% ggs()
+
+postSamples_df %&gt;%
+  ggplot() +
+  facet_wrap(~as.factor(Chain)) +
+* geom_histogram(data = postSamples_df, aes(x= value, y =..density.., fill = as.factor(Chain)), position = "identity", alpha = 0.7) + scale_fill_manual(values = wesanderson::wes_palette("FantasticFox1", n = 5))
+```
+]
+ 
+.panel2-post_sample-auto[
 
 ```
 ## Scale for 'fill' is already present. Adding another scale for 'fill', which
@@ -206,14 +294,107 @@ postSamples_df %&gt;%
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
-![](IllustrationMCMC_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+![](IllustrationMCMC_files/figure-html/post_sample_auto_05_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-post_sample-auto[
+
+```r
+## a nicer format
+postSamples_df &lt;-  postSamples %&gt;% ggs()
+
+postSamples_df %&gt;%
+  ggplot() +
+  facet_wrap(~as.factor(Chain)) +
+  geom_histogram(data = postSamples_df, aes(x= value, y =..density.., fill = as.factor(Chain)), position = "identity", alpha = 0.7) + scale_fill_manual(values = wesanderson::wes_palette("FantasticFox1", n = 5)) +
+* stat_prior
+```
+]
+ 
+.panel2-post_sample-auto[
+
+```
+## Scale for 'fill' is already present. Adding another scale for 'fill', which
+## will replace the existing scale.
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](IllustrationMCMC_files/figure-html/post_sample_auto_06_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-post_sample-auto[
+
+```r
+## a nicer format
+postSamples_df &lt;-  postSamples %&gt;% ggs()
+
+postSamples_df %&gt;%
+  ggplot() +
+  facet_wrap(~as.factor(Chain)) +
+  geom_histogram(data = postSamples_df, aes(x= value, y =..density.., fill = as.factor(Chain)), position = "identity", alpha = 0.7) + scale_fill_manual(values = wesanderson::wes_palette("FantasticFox1", n = 5)) +
+  stat_prior +
+* stat_post
+```
+]
+ 
+.panel2-post_sample-auto[
+
+```
+## Scale for 'fill' is already present. Adding another scale for 'fill', which
+## will replace the existing scale.
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](IllustrationMCMC_files/figure-html/post_sample_auto_07_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-post_sample-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-post_sample-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-post_sample-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
 
 
 
 
 ---
-template: sampling
-# Model and data
+name: CMR
+# Capture Mak Recapture
 
 While monitoring a large population of size `\(n\)` unknown, `\(m\)` individuals have been marked and released.
 The population might be considered as `\(m\)` marked individuals and `\(n-m\)` unmarked individuals. 
@@ -224,10 +405,10 @@ m = 53, YM = 9 and YNM = 75 ?
 
 
 What is the size of the population ?
+Under what assumptions ?
 
-
-
-
+---
+template: CMR
 ## Estimating the capture efficiency
 
 The probability of capture might be infered from the recapture dataset and the experiment might be modelled as 
@@ -237,6 +418,9 @@ The probability of capture might be infered from the recapture dataset and the e
 
 The capture mark recapture experiment has been used for the first time on these conditions. Few is known on the probability of capture. Therefore an uniform prior is chosen to model the a priori knowledge on `\(p\)`.
 
+
+---
+template: CMR
 ## Data
 
 ```r
@@ -246,9 +430,10 @@ YM &lt;- 9
 
 
 
-and let's discuss for the rest !
 
-
+---
+template: CMR
+## Let's figure out the rest of the model
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

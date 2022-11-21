@@ -70,12 +70,12 @@ template: coin
 
 Graphically
 
-```{r}
+```{r first_data}
 Y <- 9
 m <- 53
 ```
 
-```{r}
+```{r echo = FALSE}
 s1 <- 1
 s2 <- 1
 dta <- data.frame(x=seq(0,1, length.out = 100))
@@ -175,7 +175,7 @@ template: sampling
 ## Comparing sampled and theoretical distributions
 
 
-```{r}
+```{r post_sample, echo = FALSE, eval = FALSE}
 ## a nicer format 
 postSamples_df <-  postSamples %>% ggs()
 
@@ -191,8 +191,13 @@ postSamples_df %>%
 
 
 ---
-template: sampling
-# Model and data
+
+`r chunk_reveal("post_sample", break_type = "auto")`
+
+
+---
+name: CMR
+# Capture Mak Recapture
 
 While monitoring a large population of size $n$ unknown, $m$ individuals have been marked and released.
 The population might be considered as $m$ marked individuals and $n-m$ unmarked individuals. 
@@ -203,10 +208,10 @@ m = 53, YM = 9 and YNM = 75 ?
 
 
 What is the size of the population ?
+Under what assumptions ?
 
-
-
-
+---
+template: CMR
 ## Estimating the capture efficiency
 
 The probability of capture might be infered from the recapture dataset and the experiment might be modelled as 
@@ -216,6 +221,9 @@ The probability of capture might be infered from the recapture dataset and the e
 
 The capture mark recapture experiment has been used for the first time on these conditions. Few is known on the probability of capture. Therefore an uniform prior is chosen to model the a priori knowledge on $p$.
 
+
+---
+template: CMR
 ## Data
 ```{r}
 m <- 53
@@ -224,6 +232,7 @@ YM <- 9
 
 
 
-and let's discuss for the rest !
 
-
+---
+template: CMR
+## Let's figure out the rest of the model

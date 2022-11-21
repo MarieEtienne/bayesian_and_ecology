@@ -946,7 +946,7 @@ p_target <-data.grid %>%
   scale_fill_gradient2( high = "#C94326", mid = "#F1D763", low = "#33658A", midpoint = 0.03)
 
 
-niter <- 100
+niter <- 10000
 sd_prop <-  0.1
 pos <- data.frame(x = rep(NA, niter), y = rep(NA,niter))
 pos[1,] <- c(-2,2)

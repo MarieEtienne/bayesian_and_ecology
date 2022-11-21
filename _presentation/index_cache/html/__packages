@@ -17,4 +17,7 @@ RefManageR
 xaringan
 flipbookr
 xaringanExtra
+coda
+rjags
+ggmcmc
 mvtnorm

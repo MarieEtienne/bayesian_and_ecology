@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Building and estimating a first Bayesian model</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Marie-Pierre Etienne, Etienne Rivot" />
+    <script src="libs/header-attrs-2.7/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link rel="stylesheet" href="mpe_pres.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Building and estimating a first Bayesian model
+### Marie-Pierre Etienne, Etienne Rivot
+### <a href="https://marieetienne.github.io/bayesian_and_ecology" class="uri">https://marieetienne.github.io/bayesian_and_ecology</a>
+### M2 Mode - Data science
+
+---
+
+
+
+
+
+
+
+
+---
+name: coin 
+# Tossing a coin
+--
+
+While tossing a coin 53 times, we got 9 tails. What could we say on the probability to get a tail ?
+## Model of experiment
+
+We model the experiment by 
+$$ Y \sim \mathcal{B}(m, p),$$ 
+with `\(p\)` the probability to get a tail and `\(m\)` the total number of trials. 
+
+---
+template: coin
+## Modelling the prior knowledge on `\(p\)`
+
+As we never used that coin, we would like to add no information in the prior information. FIrst guess
+
+$$ p \sim \mathcal{U}(0,1)$$
+
+which is equivalent to
+
+$$ p \sim \mathcal{B}eta(1,1)$$
+---
+template: coin
+## Theoretical posterior distribution
+
+The full bayesian specification for the model is a so called beta binomial model which has analytical posterior distribution.
+
+`$$\pi(p\vert  Y_{obs}) \sim \mathcal{B}eta(Y_{obs} + 1,  m-Y_{obs} +1)$$`
+---
+template: coin
+## Theoretical posterior distribution
+
+Graphically
+
+
+```r
+Y &lt;- 9
+m &lt;- 53
+```
+
+
+```r
+s1 &lt;- 1
+s2 &lt;- 1
+dta &lt;- data.frame(x=seq(0,1, length.out = 100))
+p &lt;- ggplot(data = dta)
+stat_post &lt;- stat_function(data = dta, aes(x = x, y = ..y..), fun = dbeta, colour=mypal[1], n = 100,
+                      args = list(shape1 = Y+s1, shape2 = m-Y+s2))
+stat_prior &lt;- stat_function(data = dta, aes(x = x, y = ..y..), fun = dbeta, colour=mypal[2], n = 100,
+                      args = list(shape1 = s1, shape2 = s2))
+p + stat_prior +stat_post 
+```
+
+![](IllustrationMCMC_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+---
+name: sampling
+# Sampling from the posterior distribution
+
+--
+## Practical Model specification
+
+
+
+```r
+model &lt;- "
+model{
+
+  ## model 
+  Y ~ dbinom(p, m)
+
+  ## Prior distribution
+  p ~ dbeta(1, 1)
+
+} # end model
+"
+```
+
+
+
+---
+template: sampling
+## Data specification 
+
+
+```r
+data_list &lt;- list(
+  m = 53,
+  Y = 9
+)
+```
+
+
+---
+template: sampling
+## Initialisation 
+
+
+
+```r
+init_list &lt;- list(
+  p=0.1
+)
+```
+
+
+
+
+---
+template: sampling
+## Combining, model and data
+
+
+
+```r
+mjags &lt;- jags.model(file=textConnection(model), 
+                    data=data_list,
+                    inits=init_list, 
+                    n.chains = 3)
+```
+
+```
+## Compiling model graph
+##    Resolving undeclared variables
+##    Allocating nodes
+## Graph information:
+##    Observed stochastic nodes: 1
+##    Unobserved stochastic nodes: 1
+##    Total graph size: 4
+## 
+## Initializing model
+```
+
+
+
+---
+template: sampling
+## Sampling from the posterior
+
+We are interested in the posteriori distribution of `\(p\)`
+
+
+
+```r
+postSamples &lt;- coda.samples(mjags, 
+                            variable.names = c("p"),
+                            n.iter = 50000, 
+                            thin = 100)
+```
+
+
+---
+template: sampling
+## Comparing sampled and theoretical distributions
+
+
+
+```r
+## a nicer format 
+postSamples_df &lt;-  postSamples %&gt;% ggs()
+
+postSamples_df %&gt;%
+  ggplot() + 
+  facet_wrap(~as.factor(Chain)) +
+  geom_histogram(data = postSamples_df, aes(x= value, y =..density.., fill = as.factor(Chain)), position = "identity", alpha = 0.7) + scale_fill_manual(values = wesanderson::wes_palette("FantasticFox1", n = 5)) + 
+  stat_prior +
+  stat_post   
+```
+
+```
+## Scale for 'fill' is already present. Adding another scale for 'fill', which
+## will replace the existing scale.
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](IllustrationMCMC_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+
+
+
+
+---
+template: sampling
+# Model and data
+
+While monitoring a large population of size `\(n\)` unknown, `\(m\)` individuals have been marked and released.
+The population might be considered as `\(m\)` marked individuals and `\(n-m\)` unmarked individuals. 
+A recapture experiment leads to `\(YM\)` marked animals and `\(YNM\)` unmarked. 
+
+m = 53, YM = 9 and YNM = 75 ?
+
+
+
+What is the size of the population ?
+
+
+
+
+## Estimating the capture efficiency
+
+The probability of capture might be infered from the recapture dataset and the experiment might be modelled as 
+`\begin{equation}
+ YM \sim \mathcal{B}(m, p).
+\end{equation}`
+
+The capture mark recapture experiment has been used for the first time on these conditions. Few is known on the probability of capture. Therefore an uniform prior is chosen to model the a priori knowledge on `\(p\)`.
+
+## Data
+
+```r
+m &lt;- 53
+YM &lt;- 9
+```
+
+
+
+and let's discuss for the rest !
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../courses_tools/resources/collapseoutput.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:10",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

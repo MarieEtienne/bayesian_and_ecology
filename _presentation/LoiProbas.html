@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Rappel sur quelques lois de probabilité</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Marie-Pierre Etienne, Etienne Rivot" />
+    <script src="libs/header-attrs-2.7/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link rel="stylesheet" href="mpe_pres.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Rappel sur quelques lois de probabilité
+### Marie-Pierre Etienne, Etienne Rivot
+### <a href="https://marieetienne.github.io/bayesian_and_ecology" class="uri">https://marieetienne.github.io/bayesian_and_ecology</a>
+### November 2018 (updated: 2022-11-22)
+
+---
+
+
+
+
+
+
+
+
+---
+name: continue
+# Lois continues
+
+--
+## Loi exponentielle
+
+.pull-left[
+La loi exponentielle a pour support `\(\left[0,+\infty\right[\)`. `\(X\)` suit une loi exponentielle de paramètre `\(\lambda\)` si elle a pour densité
+`$$[X=t]=\left\lbrace 
+\begin{array}{l}
+\lambda exp(-\lambda \,t) \quad t\geq 0,\cr
+0 \quad sinon\cr
+\end{array}\right.
+$$
+L'espérance et la variance sont données par `$$\mathbb{E}(X)=\frac{1}{\lambda} \quad \mbox{et}\quad \mathbb{V}(X)=\frac{1}{\lambda^2}.$$`
+]
+
+.pull-right[
+![](LoiProbas_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
+]
+
+
+
+---
+template: continue
+## Loi Gamma et Inverse Gamma
+
+.pull-left[
+Si `\(Y_1, \ldots, Y_n\)` sont des variables i.i.d de loi exponentielle de paramètre
+ `\(\lambda\)` alors `\(X=\sum_{i=1}^n Y_i\)` suit une loi Gamma de paramètres de forme
+  `\(n\)` et de paramètre d'échelle `\(\lambda\)`.  On peut généraliser la définition à un `\(n\)` non entier. Le support d'une loi Gamma est
+`\(\left[0,+\infty\right[\)` et si `\(X\)` suit une loi `\(\Gamma(a,b)\)`, sa densité est donnée par~:
+`$$[X=t]=\left\lbrace
+\begin{array}{l}
+ \frac{b^a t^{a-1} e^{-b\, t}}{\Gamma(a)} \quad t\geq 0,\cr
+0 \quad sinon\cr
+\end{array}\right. $$
+
+L'espérance et la variance sont données par `$$\mathbb{E}(X)=\frac{a}{b} \quad \mbox{et}\quad \mathbb{V}(X)=\frac{a}{b^2}.$$`
+]
+
+.pull-left[
+Quelques exemples de lois Gamma pour différentes valeurs de `\(a\)` et `\(b\)`~:
+
+
+```
+## Scale for 'colour' is already present. Adding another scale for 'colour',
+## which will replace the existing scale.
+```
+]
+
+
+
+---
+template: continue
+## Loi Gamma et Inverse Gamma
+
+
+On dit que `\(X\)` suit une loi Inverse-Gamma si `\(X^{-1}\)` suit une loi Gamma. Par ces propriétés mathématiques, la loi Inverse Gamma est naturellement candidate comme prior pour le paramètre de variance dans un modèle normal.
+En effet si `\(Y\sim\mathcal{N}(\mu,\sigma^2)\)` avec `\(\mu\)` connu et `\(\sigma^2 \sim \Gamma(a,b)\)`, alors `\(\sigma^2\vert Y,\mu \sim \Gamma(a',b')\)`.
+
+---
+template: continue
+## Loi beta
+
+.pull-left[
+La loi Beta a pour support `\(\left[0,\right]\)`. Si `\(X\)` suit une loi beta de paramètre `\((a,b)\)` alors la densité de `\(X\)` est donnée par
+`$$[X=t]=\left\lbrace
+\begin{array}{l}
+ \frac{\Gamma(a+b) t^{a-1} (1-t)^{b-1} }{\Gamma(a)\Gamma(b)} \quad t\in [0,1] ,\cr
+0 \quad sinon\cr
+\end{array}\right. $$
+
+
+L'espérance et la variance sont données par `$$\mathbb{E}(X)=\frac{a}{a+b} \quad \mbox{et}\quad \mathbb{V}(X)=\frac{a\,b }{(a+b)^2 (a+b+1)}.$$`
+]
+
+.pull-right[
+
+]
+
+---
+name: discrete
+# Lois discrètes
+
+--
+## Loi binnomiale
+.pull-left[
+`\(Y\)` suit une loi de Bernoulli si le support de `\(Y\)` est `\(\left\lbrace 0,1\right\rbrace\)` et `\(\mathbb{P}(Y=1)=p\)`.     
+  Si `\(Y_1,\ldots, Y_n\)` sont des variables aléatoires indépendantes qui suivent une loi de Bernoulli de paramètre `\(p\)`, alors `\(X=\sum_{i=1}^n Y_i\)` suit une loi binomiale de paramètres `\((n,p)\)`.
+  Le support de `\(X\)` est   `\(\left\lbrace 0,1, \ldots n\right\rbrace\)` est la loi de probabilité de `\(X\)` est donnée par
+`$$[X=k] =
+  {n \choose k}  p^k \, (1-p)^{n-k} \qquad k \in \left\lbrace 0,1, \ldots n\right\rbrace $$
+
+L'espérance et la variance sont données par `$$\mathbb{E}(X)=n\, p \quad \mbox{et}\quad \mathbb{V}(X)=n \, (1-p)$$`
+]
+
+.pull-right[
+
+
+]
+
+---
+template: discrete
+## Loi de Poisson
+.pull-left[
+Le support d'une loi de Poisson est `\(\mathbb{N}\)`. `\(X\)` suit une loi de Poisson de paramètre `\(\lambda\)` si
+`$$[X=k]=\frac{\lambda^k}{k!}\exp{(-\lambda\, k)}\quad k \in \mathbb{N}$$`
+L'espérance et la variance sont données par `$$\mathbb{E}(X)=\lambda \quad \mbox{et}\quad \mathbb{V}(X)=\lambda$$`
+]
+
+.pull-right[
+
+]
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="../courses_tools/resources/collapseoutput.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:10",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

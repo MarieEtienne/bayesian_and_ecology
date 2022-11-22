@@ -108,6 +108,7 @@ p <- ggplot(data = res, aes(x=x, y=y, col= as.factor(a), linetype = as.factor(b)
   scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) +
   ylim(c(0,2.5)) +
   labs(col =  "a", linetype = "b") 
+print(p)
 ```
 ]
 
@@ -150,7 +151,9 @@ ll <- lapply(1:nrow(z), function(r_){
 
 res <- do.call('rbind', ll)
 p <- ggplot(data = res, aes(x=x, y=y, col=as.factor(a), linetype = as.factor(b))) + geom_line() + ylim(c(0,5)) + labs(col =  "a", linetype = "b") 
+print(p)
 ```
+
 ]
 
 ---
@@ -167,6 +170,7 @@ $$[X=k] =
   {n \choose k}  p^k \, (1-p)^{n-k} \qquad k \in \left\lbrace 0,1, \ldots n\right\rbrace $$
 
 L'espérance et la variance sont données par $$\mathbb{E}(X)=n\, p \quad \mbox{et}\quad \mathbb{V}(X)=n \, (1-p)$$
+
 ]
 
 .pull-right[
@@ -186,6 +190,7 @@ p <- ggplot(data = res, aes(x=x, y=y, col= as.factor(n), linetype = as.factor(p)
   geom_line() + ylim(c(0,1)) + 
   labs(col =  "n", linetype = "p") +
   scale_x_continuous(breaks=seq(1:10))
+print(p)
 ```
 ]
 
@@ -212,6 +217,7 @@ p <- ggplot(data = res, aes(x=x, y=y, col=lambda)) +
   geom_line() + 
   ylim(c(0,1)) +
   labs(col = bquote(lambda))
+print(p)
 ```
 ]
 

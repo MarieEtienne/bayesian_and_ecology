@@ -18,7 +18,7 @@ output:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE,eval = TRUE)
+knitr::opts_chunk$set(echo = FALSE,eval = TRUE, warning=FALSE, message=FALSE)
 library(ggplot2)
 theme_set(theme_minimal())
 theme_update(legend.position = 'bottom')
@@ -91,7 +91,7 @@ template: continue
 
 Quelques exemples de lois Gamma pour différentes valeurs de $a$ et $b$~:
 
-```{r, fig.show='asis'}
+```{r, fig.show='asis', warning=FALSE, message=FALSE}
 abc<-seq(0,20,0.1)
 par(mfcol=c(3,3))
 a<-c(0.1, 1, 10)

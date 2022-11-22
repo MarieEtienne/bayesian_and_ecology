@@ -37,7 +37,6 @@ name: continue
 --
 ## Loi exponentielle
 
-.pull-left[
 La loi exponentielle a pour support $\left[0,+\infty\right[$. $X$ suit une loi exponentielle de paramètre $\lambda$ si elle a pour densité
 $$[X=t]=\left\lbrace 
 \begin{array}{l}
@@ -45,9 +44,11 @@ $$[X=t]=\left\lbrace
 0 \quad sinon\cr
 \end{array}\right.$$
 L'espérance et la variance sont données par $$\mathbb{E}(X)=\frac{1}{\lambda} \quad \mbox{et}\quad \mathbb{V}(X)=\frac{1}{\lambda^2}.$$
-]
 
-.pull-right[
+---
+template: continue
+## Loi exponentielle
+
 ```{r fig.show='asis'}
 abc<-seq(0,20,0.1)
 par(mfcol=c(2,2))
@@ -64,7 +65,6 @@ p <- ggplot(data = res, aes(x=x, y=y, col=lambda)) +
   labs(col = bquote(lambda)) 
 print(p)
 ```
-]
 
 
 
@@ -72,7 +72,6 @@ print(p)
 template: continue
 ## Loi Gamma et Inverse Gamma
 
-.pull-left[
 Si $Y_1, \ldots, Y_n$ sont des variables i.i.d de loi exponentielle de paramètre
  $\lambda$ alors $X=\sum_{i=1}^n Y_i$ suit une loi Gamma de paramètres de forme
   $n$ et de paramètre d'échelle $\lambda$.  On peut généraliser la définition à un $n$ non entier. Le support d'une loi Gamma est
@@ -84,9 +83,12 @@ $$[X=t]=\left\lbrace
 \end{array}\right.$$
 
 L'espérance et la variance sont données par $$\mathbb{E}(X)=\frac{a}{b} \quad \mbox{et}\quad \mathbb{V}(X)=\frac{a}{b^2}.$$
-]
 
-.pull-right[
+
+---
+template: continue
+## Loi Gamma et Inverse Gamma
+
 Quelques exemples de lois Gamma pour différentes valeurs de $a$ et $b$~:
 
 ```{r, fig.show='asis'}
@@ -107,7 +109,6 @@ p <- ggplot(data = res, aes(x=x, y=y, col= as.factor(a), linetype = as.factor(b)
   labs(col =  "a", linetype = "b") 
 print(p)
 ```
-]
 
 
 
@@ -123,7 +124,6 @@ En effet si $Y\sim\mathcal{N}(\mu,\sigma^2)$ avec $\mu$ connu et $\sigma^2 \sim 
 template: continue
 ## Loi beta
 
-.pull-left[
 La loi Beta a pour support $\left[0,\right]$. Si $X$ suit une loi beta de paramètre $(a,b)$ alors la densité de $X$ est donnée par
 $$[X=t]=\left\lbrace
 \begin{array}{l}
@@ -133,9 +133,11 @@ $$[X=t]=\left\lbrace
 
 
 L'espérance et la variance sont données par $$\mathbb{E}(X)=\frac{a}{a+b} \quad \mbox{et}\quad \mathbb{V}(X)=\frac{a\,b }{(a+b)^2 (a+b+1)}.$$
-]
 
-.pull-right[
+---
+template: continue
+## Loi beta
+
 ```{r fig.show='asis'}
 abc<-seq(0,1,0.01)
 a<-c(0.1, 1, 2)
@@ -151,7 +153,6 @@ p <- ggplot(data = res, aes(x=x, y=y, col=as.factor(a), linetype = as.factor(b))
 print(p)
 ```
 
-]
 
 ---
 name: discrete

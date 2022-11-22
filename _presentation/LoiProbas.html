@@ -33,7 +33,6 @@ name: continue
 --
 ## Loi exponentielle
 
-.pull-left[
 La loi exponentielle a pour support `\(\left[0,+\infty\right[\)`. `\(X\)` suit une loi exponentielle de paramètre `\(\lambda\)` si elle a pour densité
 `$$[X=t]=\left\lbrace 
 \begin{array}{l}
@@ -41,11 +40,12 @@ La loi exponentielle a pour support `\(\left[0,+\infty\right[\)`. `\(X\)` suit u
 0 \quad sinon\cr
 \end{array}\right.$$`
 L'espérance et la variance sont données par `$$\mathbb{E}(X)=\frac{1}{\lambda} \quad \mbox{et}\quad \mathbb{V}(X)=\frac{1}{\lambda^2}.$$`
-]
 
-.pull-right[
+---
+template: continue
+## Loi exponentielle
+
 ![](LoiProbas_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
-]
 
 
 
@@ -53,7 +53,6 @@ L'espérance et la variance sont données par `$$\mathbb{E}(X)=\frac{1}{\lambda}
 template: continue
 ## Loi Gamma et Inverse Gamma
 
-.pull-left[
 Si `\(Y_1, \ldots, Y_n\)` sont des variables i.i.d de loi exponentielle de paramètre
  `\(\lambda\)` alors `\(X=\sum_{i=1}^n Y_i\)` suit une loi Gamma de paramètres de forme
   `\(n\)` et de paramètre d'échelle `\(\lambda\)`.  On peut généraliser la définition à un `\(n\)` non entier. Le support d'une loi Gamma est
@@ -65,9 +64,12 @@ Si `\(Y_1, \ldots, Y_n\)` sont des variables i.i.d de loi exponentielle de param
 \end{array}\right.$$`
 
 L'espérance et la variance sont données par `$$\mathbb{E}(X)=\frac{a}{b} \quad \mbox{et}\quad \mathbb{V}(X)=\frac{a}{b^2}.$$`
-]
 
-.pull-right[
+
+---
+template: continue
+## Loi Gamma et Inverse Gamma
+
 Quelques exemples de lois Gamma pour différentes valeurs de `\(a\)` et `\(b\)`~:
 
 
@@ -81,7 +83,6 @@ Quelques exemples de lois Gamma pour différentes valeurs de `\(a\)` et `\(b\)`~
 ```
 
 ![](LoiProbas_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
-]
 
 
 
@@ -97,7 +98,6 @@ En effet si `\(Y\sim\mathcal{N}(\mu,\sigma^2)\)` avec `\(\mu\)` connu et `\(\sig
 template: continue
 ## Loi beta
 
-.pull-left[
 La loi Beta a pour support `\(\left[0,\right]\)`. Si `\(X\)` suit une loi beta de paramètre `\((a,b)\)` alors la densité de `\(X\)` est donnée par
 `$$[X=t]=\left\lbrace
 \begin{array}{l}
@@ -107,12 +107,13 @@ La loi Beta a pour support `\(\left[0,\right]\)`. Si `\(X\)` suit une loi beta d
 
 
 L'espérance et la variance sont données par `$$\mathbb{E}(X)=\frac{a}{a+b} \quad \mbox{et}\quad \mathbb{V}(X)=\frac{a\,b }{(a+b)^2 (a+b+1)}.$$`
-]
 
-.pull-right[
+---
+template: continue
+## Loi beta
+
 ![](LoiProbas_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
 
-]
 
 ---
 name: discrete

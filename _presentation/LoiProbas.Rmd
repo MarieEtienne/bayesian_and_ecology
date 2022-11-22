@@ -18,7 +18,7 @@ output:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE,eval = TRUE)
 library(ggplot2)
 theme_set(theme_minimal())
 theme_update(legend.position = 'bottom')
@@ -38,6 +38,7 @@ name: continue
 ## Loi exponentielle
 
 .pull-left[
+
 La loi exponentielle a pour support $\left[0,+\infty\right[$. $X$ suit une loi exponentielle de paramètre $\lambda$ si elle a pour densité
 $$[X=t]=\left\lbrace 
 \begin{array}{l}
@@ -46,6 +47,7 @@ $$[X=t]=\left\lbrace
 \end{array}\right.
 $$
 L'espérance et la variance sont données par $$\mathbb{E}(X)=\frac{1}{\lambda} \quad \mbox{et}\quad \mathbb{V}(X)=\frac{1}{\lambda^2}.$$
+
 ]
 
 .pull-right[

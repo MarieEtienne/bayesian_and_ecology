@@ -263,7 +263,7 @@ for(i in 2:n_iter){
 
 ###  Implementation for a beta Binomial model 
 
-```{r plot_history, echo = TRUE}
+```{r plot_history, echo = TRUE, out.width="35%"}
 theta_sample %>%  
   rowid_to_column(var = "iter") %>%
   ggplot() + aes(x = iter, y =p) + 
@@ -276,7 +276,7 @@ theta_sample %>%
 
 ###  Implementation for a beta Binomial model 
 
-```{r plot_histogram, echo = TRUE}
+```{r plot_histogram, echo = TRUE, out.width="35%"}
 p1 <- theta_sample %>% 
   ggplot() + aes(x = p) + 
   geom_histogram(aes(y =after_stat(density)), alpha = 0.5) +
@@ -290,7 +290,7 @@ p1
 
 ###  Implementation for a beta Binomial model 
 
-```{r compare_histogram, echo = TRUE, out.width="40%"}
+```{r compare_histogram, echo = TRUE, out.width="35%"}
 posterior_exact <- tibble(p = seq(0,1, length.out = 10001)) %>% 
   mutate(posterior = dbeta(p, shape1 =  a.prior + y, shape2 = b.prior + N - y))
 p1 + geom_line(data = posterior_exact, aes(x=p, y =posterior), col = 'red')

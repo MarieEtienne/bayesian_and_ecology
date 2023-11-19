@@ -235,20 +235,19 @@ y = 3; N = 10
 p_init = 0.5
 ## prior
 a.prior = 1; b.prior = 1
-
 ## algo parameters
 n_iter <- 10000; sd.explore = 0.2
-
 ##sampling
 theta_sample <- tibble(p = rep(NA, n_iter))
 ## initialisation
 theta_sample$p[1] <- p_init
 
-
 ## algo
 for(i in 2:n_iter){
   theta_prop <- rstep(theta = theta_sample[i-1,], sd.explore = sd.explore)
-  u <- ratio_MH(theta_prop = theta_prop, theta_c = theta_sample[i-1,], a.prior = a.prior , b.prior = b.prior, sd.explore = sd.explore, y =y, N =N)
+  u <- ratio_MH(theta_prop = theta_prop, 
+                theta_c = theta_sample[i-1,], 
+                a.prior = a.prior , b.prior = b.prior, sd.explore = sd.explore, y =y, N =N)
   if( runif(1) < u ){
     theta_sample[i,] <- theta_prop
   } else {

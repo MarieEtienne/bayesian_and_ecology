@@ -1,11 +1,26 @@
 ---
 title: Bayesian calculus
 subtitle: Implementing MCMC
+author: Marie-Pierre Etienne, Etienne Rivot 
+institute: "https://marieetienne.github.io/bayesian_and_ecology"
+date: "M2 Mode - Data science"
+csl: "../resources/apa-no-doi-no-issue.csl"
+output:
+   xaringan::moon_reader:
+    css: ['metropolis',  'mpe_pres.css']
+    lib_dir: libs
+    nature:
+      ratio: 16:10
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: '../courses_tools/resources/collapseoutput.js'
 ---
 
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({ TeX: { extensions: ["color.js", "HTML.js"] }});
 </script>
+
 
 
 

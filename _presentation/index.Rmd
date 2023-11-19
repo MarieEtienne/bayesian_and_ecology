@@ -947,7 +947,7 @@ p_target <-data.grid %>%
 
 
 niter <- 10000
-sd_prop <-  0.1
+sd_prop <-  0.2
 pos <- data.frame(x = rep(NA, niter), y = rep(NA,niter))
 pos[1,] <- c(-2,2)
 for(i in 1: (niter-1)){

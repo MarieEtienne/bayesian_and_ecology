@@ -95,7 +95,7 @@ ggplot <- function(...) ggplot2::ggplot(...) + scale_fill_manual(values = wesand
 
 ### Generic Implementation 
 
-
+.pull-left[
 ```{r likelihood, echo = TRUE, eval = FALSE}
 # [Y|theta]
 likelihood<- function(theta, y){
@@ -111,7 +111,9 @@ dprior <- function(theta){
   
 }
 ```
+]
 
+.pull-right[
 
 ```{r dstep, echo = TRUE, eval = FALSE}
 # d(theta_c|theta_i-1)
@@ -126,6 +128,8 @@ dstep <- function(theta1, theta2){
 rstep <- function(theta){
 }
 ```
+
+]
 
 
 ---

@@ -131,6 +131,15 @@ rstep <- function(theta){
 
 ]
 
+```{r ratio, echo = TRUE, eval = FALSE}
+
+ratio_MH <- function(theta_prop, theta_c, ...){
+  ratio_post <- likelihood(theta_prop) * dprior(theta_prop) /
+    (likelihood(theta_c) * dprior(theta_c))
+  ratio_step <- dstep(theta_prop, theta_c) / 
+    dstep(theta_c, theta_prop)
+  return(ratio_post * ratio_step)
+}
 
 ---
 ## Monte Carlo Markov Chain algorithm (MCMC)

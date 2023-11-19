@@ -290,7 +290,7 @@ p1
 
 ###  Implementation for a beta Binomial model 
 
-```{r compare_histogram, echo = TRUE, out.height="60%"}
+```{r compare_histogram, echo = TRUE, out.height="40%"}
 posterior_exact <- tibble(p = seq(0,1, length.out = 10001)) %>% 
   mutate(posterior = dbeta(p, shape1 =  a.prior + y, shape2 = b.prior + N - y))
 p1 + geom_line(data = posterior_exact, aes(x=p, y =posterior), col = 'red')

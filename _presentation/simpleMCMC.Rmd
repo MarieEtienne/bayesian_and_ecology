@@ -1,0 +1,250 @@
+---
+title: Bayesian calculus
+subtitle: Implementing MCMC
+---
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { extensions: ["color.js", "HTML.js"] }});
+</script>
+
+
+
+
+
+```{r setup, include = FALSE,  eval = TRUE}
+library('RefManageR')
+main_dir <-  '..'
+common_img_dir <- file.path(main_dir,'courses_tools','resources', 'common_figs')
+course_img_dir <- file.path(main_dir,'resources', 'figs')
+BibOptions(check.entries = FALSE,
+           bib.style = "authoryear",
+           cite.style = "authoryear",
+           style = "markdown",
+           hyperlink = TRUE,
+           max.names = 3,
+           longnamesfirst= FALSE, 
+           dashed = TRUE)
+myBib <- ReadBib('bayes.bib', check = FALSE)
+knitr::opts_chunk$set(echo = FALSE, size='footnotesize', cache = TRUE)
+library(ggplot2)
+library(tidyverse)
+theme_set(theme_minimal() +  theme(
+        rect = element_rect(fill = "transparent") # all rectangles
+      ))
+```
+
+```{r xaringan-fit-screen, echo=FALSE}
+xaringanExtra::use_fit_screen()
+```
+
+
+```{r datapackage, eval = TRUE, echo = FALSE, warning = FALSE}
+ggplot <- function(...) ggplot2::ggplot(...) + scale_fill_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) + scale_color_manual(values = wesanderson::wes_palette(name = "Darjeeling1")) 
+#remotes::install_github('MarieEtienne/coursesdata', force = TRUE)
+```
+
+
+
+<!-- F1D763 -->
+<!-- F7A913 -->
+<!-- C94326 -->
+<!-- 1F908E -->
+<!-- 33658A -->
+
+
+
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+### Metropolis Hastings algorithm
+
+.rouge[Key idea:] building a reversible Markov chain with $[\theta\vert y]$ as stationnary distribution
+
+--
+
+1. Initialization   $\theta^{(0)}$ an admissible initial value
+
+2. For i in 1:nIter
+  + Propose a new candidate value $\theta_c^{(i)}$ sampled from a proposal distribution $g(. \vert \theta^{(i-1)})$
+  + Compute Metropolis Hastings ratio
+    $$ r_i=\class{bleu}{\frac{[y\vert \theta_c^{(i)}] [\theta_c^{(i)} ] }{[y\vert \theta^{(i-1)}] [\theta^{(i-1)} ] } } \class{rouge}{\frac{g(\theta^{(i-1)} \vert \theta_c^{(i)})}{g(\theta_c^{(i)} \vert \theta^{(i-1)})}}$$
+    + Define 
+    $$ \theta^{(i)} =\left \lbrace
+    \begin{array}{l}
+    \theta_c^{(i)} \mbox{ with probability } min( r_i,1) \cr
+    \theta^{(i-1)} \mbox{ with probability } 1-min( r_i,1) \cr
+    \end{array}\right.$$
+
+
+---
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+### Generic Implementation 
+
+
+```{r likelihood, echo = TRUE, eval = FALSE}
+# [Y|theta]
+likelihood<- function(theta, y){
+  
+}
+
+```
+  
+
+```{r dprior, echo = TRUE, eval = FALSE}
+# [theta]
+dprior <- function(theta){
+  
+}
+```
+
+
+```{r dstep, echo = TRUE, eval = FALSE}
+# d(theta_c|theta_i-1)
+dstep <- function(theta1, theta2){
+  
+}
+```
+
+
+```{r rstep, echo = TRUE, eval = FALSE}
+# sample theta_prop from theta
+rstep <- function(theta){
+}
+```
+
+
+---
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+### Beta Binomial model 
+
+$$Y\vert \mathcal{B}in(N, p), \quad p\vert \mathcal{B}(eta)(1,1)$$
+
+### Data
+$N= 10, y=3$
+
+### Propose a MCMC algorithm
+
+
+---
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+###  Implementation for a beta Binomial model 
+
+
+```{r likelihood_binom, echo = TRUE}
+# [Y|theta]
+likelihood<- function(theta, y, N){
+  if(theta$p < 0 | theta$p > 1) { 
+    return(0)
+  } else {
+    return(dbinom(x = y, size = N, prob = theta$p))
+  }
+}
+
+```
+  
+
+```{r dprior_beta, echo = TRUE}
+# [theta]
+dprior <- function(theta, a.prior = 1, b.prior =1){
+  dbeta(theta$p, shape1 = a.prior, shape2 = b.prior)
+}
+```
+
+---
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+###  Implementation for a beta Binomial model 
+
+```{r dstep_norm, echo = TRUE}
+# d(theta_c|theta_i-1)
+dstep <- function(theta1, theta2, sd.explore = 0.1){
+  dnorm(theta2$p, mean = theta1$p, sd = sd.explore)
+}
+```
+
+
+```{r rstep_norm, echo = TRUE}
+# sample theta_prop from theta
+rstep <- function(theta, sd.explore = 0.1){
+  theta_prop= list()
+  theta_prop$p <- rnorm(1, mean = theta$p, sd = sd.explore)
+  return(theta_prop)
+}
+```
+
+
+---
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+###  Implementation for a beta Binomial model 
+
+
+```{r ratio_norm, echo = TRUE}
+# sample theta_prop from theta
+ratio_MH <- function(theta_prop, theta_c, 
+                     a.prior = 1, b.prior = 1, sd.explore = 0.1, 
+                     y = y, N = N){
+  ratio_post <- likelihood(theta_prop, y, N) * dprior(theta = theta_prop, a.prior = a.prior, b.prior = b.prior) /
+    (likelihood(theta_c, y, N) * dprior(theta = theta_c, a.prior = a.prior, b.prior = b.prior))
+  ratio_step <- dstep(theta1 = theta_prop, theta2 = theta_c, sd.explore = sd.explore) / 
+    dstep(theta1 = theta_c, theta2 = theta_prop, sd.explore = sd.explore)
+  return(ratio_post * ratio_step)
+}
+```
+
+---
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+###  Implementation for a beta Binomial model 
+
+
+```{r MH_init, echo = TRUE}
+## data 
+y = 3
+N = 10
+## init 
+p_init = 0.5
+## prior
+a.prior = 1
+b.prior = 1
+
+## algo parameters
+n_iter <- 10000
+sd.explore = 0.2
+
+##sampling
+theta_sample <- tibble(p = rep(NA, n_iter))
+## initialisation
+theta_sample$p[1] <- p_init
+
+
+## algo
+for(i in 2:n_iter){
+  theta_prop <- rstep(theta = theta_sample[i-1,], sd.explore = sd.explore)
+  u <- ratio_MH(theta_prop = theta_prop, theta_c = theta_sample[i-1,], a.prior = a.prior , b.prior = b.prior, sd.explore = sd.explore, y =y, N =N)
+  if( runif(1) < u ){
+    theta_sample[i,] <- theta_prop
+  } else {
+    theta_sample[i,] <- theta_sample[i-1,]
+  }
+}
+
+
+theta_sample %>%  
+  rowid_to_column(var = "iter") %>%
+  ggplot() + aes(x = iter, y =p) + 
+  geom_line()
+
+p1 <- theta_sample %>% 
+  ggplot() + aes(x = p) + 
+  geom_histogram(aes(y =after_stat(density)), alpha = 0.5) +
+  geom_density()
+p1
+
+posterior_exact <- tibble(p = seq(0,1, length.out = 10001)) %>% 
+  mutate(posterior = dbeta(p, shape1 =  a.prior + y, shape2 = b.prior + N - y))
+p1 + geom_line(data = posterior_exact, aes(x=p, y =posterior), col = 'red')
+```
+

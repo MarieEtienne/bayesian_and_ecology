@@ -209,17 +209,14 @@ ratio_MH &lt;- function(theta_prop, theta_c,
 
 ```r
 ## data 
-y = 3
-N = 10
+y = 3; N = 10
 ## init 
 p_init = 0.5
 ## prior
-a.prior = 1
-b.prior = 1
+a.prior = 1; b.prior = 1
 
 ## algo parameters
-n_iter &lt;- 10000
-sd.explore = 0.2
+n_iter &lt;- 10000; sd.explore = 0.2
 
 ##sampling
 theta_sample &lt;- tibble(p = rep(NA, n_iter))

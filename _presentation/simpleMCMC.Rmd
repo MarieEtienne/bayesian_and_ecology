@@ -247,18 +247,41 @@ for(i in 2:n_iter){
   }
 }
 
+```
 
+---
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+###  Implementation for a beta Binomial model 
+
+```{r plot_history, echo = TRUE}
 theta_sample %>%  
   rowid_to_column(var = "iter") %>%
   ggplot() + aes(x = iter, y =p) + 
   geom_line()
+```
 
+---
+
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+###  Implementation for a beta Binomial model 
+
+```{r plot_histogram, echo = TRUE}
 p1 <- theta_sample %>% 
   ggplot() + aes(x = p) + 
   geom_histogram(aes(y =after_stat(density)), alpha = 0.5) +
   geom_density()
 p1
+```
 
+---
+
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+###  Implementation for a beta Binomial model 
+
+```{r compare_histogram, echo = TRUE}
 posterior_exact <- tibble(p = seq(0,1, length.out = 10001)) %>% 
   mutate(posterior = dbeta(p, shape1 =  a.prior + y, shape2 = b.prior + N - y))
 p1 + geom_line(data = posterior_exact, aes(x=p, y =posterior), col = 'red')

@@ -234,15 +234,29 @@ for(i in 2:n_iter){
     theta_sample[i,] &lt;- theta_sample[i-1,]
   }
 }
+```
+
+---
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+###  Implementation for a beta Binomial model 
 
 
+```r
 theta_sample %&gt;%  
   rowid_to_column(var = "iter") %&gt;%
   ggplot() + aes(x = iter, y =p) + 
   geom_line()
 ```
 
-![](simpleMCMC_files/figure-html/MH_init-1.png)&lt;!-- --&gt;
+![](simpleMCMC_files/figure-html/plot_history-1.png)&lt;!-- --&gt;
+
+---
+
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+###  Implementation for a beta Binomial model 
+
 
 ```r
 p1 &lt;- theta_sample %&gt;% 
@@ -256,7 +270,14 @@ p1
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
-![](simpleMCMC_files/figure-html/MH_init-2.png)&lt;!-- --&gt;
+![](simpleMCMC_files/figure-html/plot_histogram-1.png)&lt;!-- --&gt;
+
+---
+
+## Monte Carlo Markov Chain algorithm (MCMC)
+
+###  Implementation for a beta Binomial model 
+
 
 ```r
 posterior_exact &lt;- tibble(p = seq(0,1, length.out = 10001)) %&gt;% 
@@ -268,7 +289,7 @@ p1 + geom_line(data = posterior_exact, aes(x=p, y =posterior), col = 'red')
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
-![](simpleMCMC_files/figure-html/MH_init-3.png)&lt;!-- --&gt;
+![](simpleMCMC_files/figure-html/compare_histogram-1.png)&lt;!-- --&gt;
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

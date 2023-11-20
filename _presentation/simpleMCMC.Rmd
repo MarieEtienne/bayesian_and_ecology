@@ -140,6 +140,7 @@ ratio_MH <- function(theta_prop, theta_c, ...){
     dstep(theta_c, theta_prop)
   return(ratio_post * ratio_step)
 }
+```
 
 ---
 ## Monte Carlo Markov Chain algorithm (MCMC)

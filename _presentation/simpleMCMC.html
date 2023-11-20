@@ -123,16 +123,17 @@ ratio_MH &lt;- function(theta_prop, theta_c, ...){
     dstep(theta_c, theta_prop)
   return(ratio_post * ratio_step)
 }
+```
 
 ---
 ## Monte Carlo Markov Chain algorithm (MCMC)
 
 ### Beta Binomial model 
 
-$$Y\vert \mathcal{B}in(N, p), \quad p\vert \mathcal{B}(eta)(1,1)$$
+`$$Y\vert \mathcal{B}in(N, p), \quad p\vert \mathcal{B}(eta)(1,1)$$`
 
 ### Data
-$N= 10, y=3$
+`\(N= 10, y=3\)`
 
 ### Propose a MCMC algorithm
 
@@ -141,7 +142,8 @@ $N= 10, y=3$
 ## Monte Carlo Markov Chain algorithm (MCMC)
 
 ###  Implementation for a beta Binomial model 
-```
+
+
 
 ```r
 # [Y|theta]
